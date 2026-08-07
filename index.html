@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>לוֹמְדִים לִקְרֹא שָׁעוֹן</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF3EC;
+    --lavender:#D9CBF0;
+    --lavender-strong:#B79CE0;
+    --mint:#C3EAD8;
+    --mint-strong:#7FCFAE;
+    --sky:#C9E0F5;
+    --sky-strong:#8FBEE8;
+    --peach:#F6D3C2;
+    --peach-strong:#EFA987;
+    --sun:#FBE7A1;
+    --sun-strong:#F2C94C;
+    --ink:#4E4260;
+    --ink-soft:#7A6E8C;
+    --card:#FFFFFF;
+    --lcd-bg:#4A3F5C;
+    --lcd-fg:#9FE8C5;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:
+      radial-gradient(circle at 12% 8%, var(--sun) 0%, transparent 40%),
+      radial-gradient(circle at 90% 15%, var(--sky) 0%, transparent 35%),
+      radial-gradient(circle at 85% 90%, var(--mint) 0%, transparent 40%),
+      var(--bg);
+    font-family:'Assistant', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+  }
+  h1,h2,h3, .display{font-family:'Rubik', sans-serif;}
+  #app{
+    max-width:720px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding:14px 16px 8px;
+  }
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .pill-btn{
+    border:none;
+    border-radius:999px;
+    padding:10px 18px;
+    font-family:'Assistant', sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    cursor:pointer;
+    background:var(--card);
+    color:var(--ink);
+    box-shadow:0 3px 0 rgba(0,0,0,0.06), 0 4px 14px rgba(120,100,150,0.12);
+    transition:transform .12s ease;
+  }
+  .pill-btn:active{transform:translateY(2px) scale(.98);}
+  .stars-badge{
+    display:flex;align-items:center;gap:6px;
+    background:var(--sun);
+    border-radius:999px;
+    padding:8px 16px;
+    font-weight:800;
+    font-size:1.1rem;
+    box-shadow:0 3px 0 rgba(0,0,0,0.06);
+  }
+  main{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .app-title{
+    font-size:2rem;
+    font-weight:800;
+    margin:6px 0 2px;
+    letter-spacing:.5px;
+  }
+  .app-sub{
+    color:var(--ink-soft);
+    font-size:1.15rem;
+    font-weight:600;
+    margin-bottom:18px;
+  }
+  .mascot-wrap{margin:6px auto 14px;}
+  .cards-row{
+    display:flex;gap:18px;flex-wrap:wrap;justify-content:center;width:100%;
+    margin-top:8px;
+  }
+  .track-card{
+    background:var(--card);
+    border-radius:28px;
+    padding:22px 20px 20px;
+    width:260px;
+    box-shadow:0 6px 0 rgba(0,0,0,0.05), 0 10px 24px rgba(120,100,150,0.14);
+    cursor:pointer;
+    transition:transform .15s ease;
+    border:4px solid transparent;
+  }
+  .track-card:hover{transform:translateY(-4px);}
+  .track-card.analog{border-color:var(--peach);}
+  .track-card.digital{border-color:var(--sky);}
+  .track-card h2{font-size:1.4rem;margin:10px 0 6px;}
+  .track-card p{font-size:1.05rem;color:var(--ink-soft);font-weight:600;margin:0;}
+  .icon-circle{
+    width:88px;height:88px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto;font-size:2.4rem;
+  }
+  .icon-circle.analog{background:var(--peach);}
+  .icon-circle.digital{background:var(--sky);}
+
+  .content-card{
+    background:var(--card);
+    border-radius:28px;
+    padding:22px 20px;
+    width:100%;
+    max-width:640px;
+    box-shadow:0 6px 0 rgba(0,0,0,0.05), 0 10px 24px rgba(120,100,150,0.14);
+    margin-bottom:16px;
+  }
+  .step-title{font-size:1.5rem;font-weight:800;margin:2px 0 10px;}
+  .step-text{font-size:1.25rem;font-weight:600;line-height:1.7;color:var(--ink);margin:0 0 14px;}
+  .speak-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--lavender);
+    color:var(--ink);
+    border:none;border-radius:999px;
+    padding:10px 20px;font-size:1.05rem;font-weight:700;
+    cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,0.06);
+    margin-bottom:10px;
+  }
+  .speak-btn:active{transform:translateY(2px);}
+  .no-audio-note{
+    font-size:.95rem;color:var(--ink-soft);font-weight:600;
+    background:var(--bg);border-radius:14px;padding:8px 14px;margin-bottom:10px;
+    display:inline-block;
+  }
+  .nav-row{
+    display:flex;gap:12px;justify-content:center;margin-top:10px;flex-wrap:wrap;
+  }
+  .primary-btn{
+    background:var(--mint-strong);
+    color:#fff;border:none;border-radius:999px;
+    padding:14px 28px;font-size:1.2rem;font-weight:800;
+    cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,0.08);
+    font-family:'Assistant', sans-serif;
+  }
+  .primary-btn:active{transform:translateY(3px);box-shadow:none;}
+  .secondary-btn{
+    background:var(--card);
+    color:var(--ink);border:3px solid var(--lavender);
+    border-radius:999px;
+    padding:11px 24px;font-size:1.1rem;font-weight:700;
+    cursor:pointer;
+    font-family:'Assistant', sans-serif;
+  }
+  .ghost-btn{
+    background:transparent;color:var(--ink-soft);
+    border:2px dashed var(--lavender-strong);
+    border-radius:999px;padding:9px 18px;font-size:1rem;font-weight:700;
+    cursor:pointer;font-family:'Assistant', sans-serif;
+  }
+  .dots{display:flex;gap:8px;justify-content:center;margin:6px 0 14px;}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--lavender);opacity:.4;}
+  .dot.active{opacity:1;background:var(--lavender-strong);}
+
+  .clock-wrap{margin:10px auto;}
+  .digital-display{
+    background:var(--lcd-bg);
+    color:var(--lcd-fg);
+    display:inline-block;
+    padding:20px 34px;
+    border-radius:20px;
+    font-family:'Rubik', sans-serif;
+    font-size:3.2rem;
+    font-weight:700;
+    letter-spacing:3px;
+    box-shadow:inset 0 0 0 4px rgba(255,255,255,0.06), 0 6px 0 rgba(0,0,0,0.15);
+    margin:10px auto;
+  }
+  .hint-table{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+    margin:10px 0 4px;
+  }
+  .hint-chip{
+    background:var(--sun);
+    border-radius:14px;
+    padding:6px 12px;
+    font-weight:700;
+    font-size:.98rem;
+  }
+
+  .quiz-question{font-size:1.35rem;font-weight:800;margin:6px 0 16px;}
+  .options-row{
+    display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;
+  }
+  .option-btn{
+    background:var(--sky);
+    border:none;border-radius:20px;
+    padding:14px 20px;
+    font-size:1.3rem;font-weight:800;
+    font-family:'Rubik', sans-serif;
+    cursor:pointer;
+    min-width:110px;
+    box-shadow:0 4px 0 rgba(0,0,0,0.07);
+    transition:transform .1s ease;
+  }
+  .option-btn:active{transform:translateY(3px);}
+  .option-btn.correct{background:var(--mint-strong);color:#fff;}
+  .option-btn.wrong{background:var(--peach-strong);color:#fff;}
+  .option-btn[disabled]{cursor:default;}
+  .option-clock-btn{
+    background:var(--card);
+    border:4px solid var(--sky);
+    border-radius:20px;
+    padding:8px;
+    cursor:pointer;
+  }
+  .option-clock-btn.correct{border-color:var(--mint-strong);}
+  .option-clock-btn.wrong{border-color:var(--peach-strong);}
+  .option-clock-btn[disabled]{cursor:default;}
+
+  .feedback-box{
+    font-size:1.3rem;font-weight:800;
+    border-radius:18px;
+    padding:12px 16px;
+    margin:8px 0 4px;
+    display:none;
+  }
+  .feedback-box.show{display:block;}
+  .feedback-box.good{background:var(--mint);color:#2E6B52;}
+  .feedback-box.bad{background:var(--peach);color:#8A4A2E;}
+
+  .progress-line{font-size:1rem;color:var(--ink-soft);font-weight:700;margin-top:4px;}
+
+  footer{
+    text-align:center;
+    font-size:.85rem;
+    color:var(--ink-soft);
+    padding:14px 0 6px;
+    opacity:.8;
+  }
+
+  .bonus-tag{
+    display:inline-block;background:var(--lavender);
+    color:var(--ink);font-weight:800;font-size:.9rem;
+    padding:4px 14px;border-radius:999px;margin-bottom:8px;
+  }
+
+  .splash-wrap{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:80vh;text-align:center;
+  }
+  .splash-btn{
+    background:var(--sun-strong);
+    color:#5A4A00;border:none;border-radius:999px;
+    padding:18px 40px;font-size:1.5rem;font-weight:800;
+    cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,0.1);
+    font-family:'Assistant', sans-serif;
+    margin-top:18px;
+  }
+  .splash-btn:active{transform:translateY(3px);box-shadow:none;}
+
+  @media (max-width:480px){
+    .app-title{font-size:1.6rem;}
+    .track-card{width:100%;}
+    .digital-display{font-size:2.3rem;padding:16px 22px;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ---------------- Voice (narration) ---------------- */
+let heVoice = null;
+let audioUnlocked = false;
+let ttsSupported = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+
+function pickVoice(){
+  if (!ttsSupported) return;
+  const voices = speechSynthesis.getVoices();
+  heVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('he') &&
+                    /female|carmit|נשי/i.test(v.name)) ||
+            voices.find(v => v.lang && v.lang.toLowerCase().startsWith('he')) ||
+            null;
+}
+if (ttsSupported){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+  let tries = 0;
+  const poll = setInterval(()=>{
+    tries++;
+    pickVoice();
+    if (heVoice || tries > 10) clearInterval(poll);
+  }, 300);
+}
+
+let currentNarration = '';
+
+function speak(text){
+  if (!ttsSupported) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/\n/g,' '));
+    u.lang = 'he-IL';
+    if (heVoice) u.voice = heVoice;
+    u.rate = 0.92;
+    u.pitch = 1.15;
+    speechSynthesis.speak(u);
+  }catch(e){ /* fail silently, app still works without audio */ }
+}
+function replay(){ speak(currentNarration); }
+function say(text){ currentNarration = text; speak(text); }
+
+/* ---------------- Persistent progress ---------------- */
+let stars = 0;
+async function loadProgress(){
+  try{
+    const r = await window.storage.get('clock-app-progress', false);
+    if (r && r.value){
+      const d = JSON.parse(r.value);
+      stars = d.stars || 0;
+    }
+  }catch(e){ stars = 0; }
+}
+async function saveProgress(){
+  try{ await window.storage.set('clock-app-progress', JSON.stringify({stars}), false); }
+  catch(e){ /* best effort */ }
+}
+function addStar(n){ stars += (n||1); saveProgress(); const b=document.getElementById('starsCount'); if(b) b.textContent = stars; }
+
+/* ---------------- Mascot ---------------- */
+function mascotSVG(mood){
+  const mouth = mood==='cheer'
+    ? '<path d="M42 66 Q60 86 78 66" stroke="#4E4260" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    : mood==='kind'
+    ? '<path d="M46 68 Q60 76 74 68" stroke="#4E4260" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    : '<path d="M44 64 Q60 82 76 64" stroke="#4E4260" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  return `
+  <svg width="120" height="120" viewBox="0 0 120 120">
+    <g>
+      ${Array.from({length:12}).map((_,i)=>{
+        const a = i*30*Math.PI/180;
+        const x1=60+42*Math.cos(a), y1=60+42*Math.sin(a);
+        const x2=60+52*Math.cos(a), y2=60+52*Math.sin(a);
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#F2C94C" stroke-width="6" stroke-linecap="round"/>`;
+      }).join('')}
+      <circle cx="60" cy="60" r="38" fill="#FBE7A1" stroke="#F2C94C" stroke-width="3"/>
+      <circle cx="45" cy="55" r="5" fill="#4E4260"/>
+      <circle cx="75" cy="55" r="5" fill="#4E4260"/>
+      ${mouth}
+    </g>
+  </svg>`;
+}
+
+/* ---------------- Analog clock renderer ---------------- */
+function clockFace(hour, minute, opts={}){
+  const size = opts.size || 210;
+  const cx = size/2, cy = size/2, r = size/2 - 14;
+  const hourAngle = ((hour%12) + minute/60) * 30 - 90;
+  const minAngle = minute*6 - 90;
+  const hourLen = r*0.48, minLen = r*0.8;
+  const toXY = (angleDeg, len) => [cx + len*Math.cos(angleDeg*Math.PI/180), cy + len*Math.sin(angleDeg*Math.PI/180)];
+  const [hx,hy] = toXY(hourAngle, hourLen);
+  const [mx,my] = toXY(minAngle, minLen);
+  const hourColor = opts.dimHour ? '#D8CFE6' : (opts.highlightHour ? '#EFA987' : '#4E4260');
+  const minColor = opts.dimMinute ? '#D8CFE6' : (opts.highlightMinute ? '#8FBEE8' : '#4E4260');
+  const hourWidth = opts.highlightHour ? 9 : 6;
+  const minWidth = opts.highlightMinute ? 7 : 4;
+
+  let numbers = '';
+  for (let n=1; n<=12; n++){
+    const a = (n*30) - 90;
+    const [nx,ny] = toXY(a, r-24);
+    numbers += `<text x="${nx}" y="${ny+7}" text-anchor="middle" font-family="Rubik" font-weight="700" font-size="${size*0.1}" fill="#4E4260">${n}</text>`;
+  }
+  let ticks = '';
+  for (let n=0; n<60; n+=5){
+    const a = n*6 - 90;
+    const [x1,y1] = toXY(a, r-8);
+    const [x2,y2] = toXY(a, r-2);
+    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#C9B8E8" stroke-width="3" stroke-linecap="round"/>`;
+  }
+
+  return `
+  <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#FFFDF9" stroke="#D9CBF0" stroke-width="6"/>
+    ${ticks}
+    ${numbers}
+    <line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="${hourColor}" stroke-width="${hourWidth}" stroke-linecap="round"/>
+    <line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="${minColor}" stroke-width="${minWidth}" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="7" fill="#4E4260"/>
+  </svg>`;
+}
+
+function digitalBox(hour, minute, hour24){
+  const h = hour24!=null ? hour24 : hour;
+  const hh = String(h).padStart(2,'0');
+  const mm = String(minute).padStart(2,'0');
+  return `<div class="digital-display">${hh}:${mm}</div>`;
+}
+
+const hourWords = {1:'אַחַת',2:'שְׁתַּיִם',3:'שָׁלוֹשׁ',4:'אַרְבַּע',5:'חָמֵשׁ',6:'שֵׁשׁ',
+  7:'שֶׁבַע',8:'שְׁמוֹנֶה',9:'תֵּשַׁע',10:'עֶשֶׂר',11:'אַחַת עֶשְׂרֵה',12:'שְׁתֵּים עֶשְׂרֵה'};
+function timeToWords(hour, minute){
+  return minute===0 ? `הַשָּׁעָה ${hourWords[hour]}` : `הַשָּׁעָה ${hourWords[hour]} וָחֵצִי`;
+}
+
+/* ---------------- App state / router ---------------- */
+let route = 'start';
+let analogStep = 0;
+let digitalStep = 0;
+let quizState = null;
+let bonusState = null;
+
+function go(r){ route = r; render(); }
+
+function topbar(){
+  return `
+  <div class="topbar">
+    <button class="pill-btn" onclick="go('home')">🏠 בַּיִת</button>
+    <div class="stars-badge">⭐ <span id="starsCount">${stars}</span></div>
+  </div>`;
+}
+
+function footer(){
+  return `<footer>נוֹצַר עַל יְדֵי מִיכַל כַּהֲנָא</footer>`;
+}
+
+function narrationControls(text){
+  currentNarration = text;
+  if (!ttsSupported){
+    return `<div class="no-audio-note">🔇 הַדְּפָדְפָן הַזֶּה לֹא תּוֹמֵךְ בְּהַקְרָאָה, אֲבָל אֶפְשָׁר לְהַמְשִׁיךְ לְפִי הַכָּתוּב</div>`;
+  }
+  return `<button class="speak-btn" onclick="replay()">🔊 הַקְשִׁיבוּ</button>`;
+}
+
+/* ---------------- START SPLASH (unlocks audio with a real tap) ---------------- */
+function renderStart(){
+  document.getElementById('app').innerHTML = `
+    <main class="splash-wrap">
+      <div class="mascot-wrap">${mascotSVG('cheer')}</div>
+      <h1 class="app-title">לוֹמְדִים לִקְרֹא שָׁעוֹן</h1>
+      <p class="app-sub">מַסָּע כֵּיפִי בְּעוֹלַם הַזְּמַן ⏰</p>
+      <button class="splash-btn" onclick="unlockAndEnter()">🔊 בּוֹאוּ נַתְחִיל!</button>
+    </main>
+    ${footer()}
+  `;
+}
+function unlockAndEnter(){
+  audioUnlocked = true;
+  say('שָׁלוֹם חֲבֵרִים! בּוֹאוּ נִלְמַד יַחַד לִקְרֹא שָׁעוֹן.');
+  go('home');
+}
+
+/* ---------------- HOME ---------------- */
+function renderHome(){
+  const welcome = "אֶפְשָׁר לִבְחֹר בְּשָׁעוֹן מְחוֹגִים אוֹ בְּשָׁעוֹן דִּיגִיטָלִי.";
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="mascot-wrap">${mascotSVG('kind')}</div>
+      <h1 class="app-title">לוֹמְדִים לִקְרֹא שָׁעוֹן</h1>
+      <p class="app-sub">מַסָּע כֵּיפִי בְּעוֹלַם הַזְּמַן ⏰</p>
+      ${narrationControls(welcome)}
+      <div class="cards-row">
+        <div class="track-card analog" onclick="analogStep=0; go('analog-learn')">
+          <div class="icon-circle analog">⏱️</div>
+          <h2>שְׁעוֹן מְחוֹגִים</h2>
+          <p>הַמַּחוֹג הַקָּטָן וְהַמַּחוֹג הַגָּדוֹל</p>
+        </div>
+        <div class="track-card digital" onclick="digitalStep=0; go('digital-learn')">
+          <div class="icon-circle digital">🔢</div>
+          <h2>שָׁעוֹן דִּיגִיטָלִי</h2>
+          <p>לוֹמְדִים לִקְרֹא מִסְפָּרִים עַל הַשָּׁעוֹן</p>
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  if (audioUnlocked) speak(welcome);
+}
+
+/* ---------------- ANALOG LEARN ---------------- */
+const analogSteps = [
+  {
+    title: 'זֶה שְׁעוֹן מְחוֹגִים',
+    text: 'עַל הַשָּׁעוֹן יֵשׁ מִסְפָּרִים מִ־1 עַד 12, וּשְׁנֵי מְחוֹגִים שֶׁזָּזִים בְּעִגּוּל.',
+    clock: {hour:12, minute:0, dimHour:false, dimMinute:false}
+  },
+  {
+    title: 'הַמַּחוֹג הַקָּטָן',
+    text: 'הַמַּחוֹג הַקָּטָן וְהֶעָבֶה מַרְאֶה לָנוּ אֶת הַשָּׁעָה.',
+    clock: {hour:3, minute:0, highlightHour:true, dimMinute:true}
+  },
+  {
+    title: 'הַמַּחוֹג הַגָּדוֹל',
+    text: 'הַמַּחוֹג הַגָּדוֹל וְהָאָרֹךְ מַרְאֶה לָנוּ אֶת הַדַּקּוֹת. כְּשֶׁהוּא מַצְבִּיעַ עַל 12, זֶה בְּדִיּוּק שָׁעָה עֲגֻלָּה.',
+    clock: {hour:3, minute:0, highlightMinute:true, dimHour:true}
+  },
+  {
+    title: 'קוֹרְאִים שָׁעָה עֲגֻלָּה',
+    text: 'הַמַּחוֹג הַגָּדוֹל עַל 12, וְהַמַּחוֹג הַקָּטָן עַל 3. הַשָּׁעָה הִיא שָׁלוֹשׁ בְּדִיּוּק!',
+    clock: {hour:3, minute:0}
+  },
+  {
+    title: 'קוֹרְאִים חֲצִי שָׁעָה',
+    text: 'כְּשֶׁהַמַּחוֹג הַגָּדוֹל מַצְבִּיעַ עַל 6, עָבְרָה חֲצִי שָׁעָה. זֶה נִקְרָא וָחֵצִי, לְמָשָׁל שָׁלוֹשׁ וָחֵצִי.',
+    clock: {hour:3, minute:30}
+  }
+];
+
+function renderAnalogLearn(){
+  const s = analogSteps[analogStep];
+  const dots = analogSteps.map((_,i)=>`<div class="dot ${i===analogStep?'active':''}"></div>`).join('');
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="step-title">${s.title}</div>
+        <div class="clock-wrap">${clockFace(s.clock.hour, s.clock.minute, s.clock)}</div>
+        <p class="step-text">${s.text}</p>
+        ${narrationControls(s.text)}
+        <div class="dots">${dots}</div>
+        <div class="nav-row">
+          ${analogStep>0 ? `<button class="secondary-btn" onclick="analogStep--; renderAnalogLearn()">→ חָזָרָה</button>` : ''}
+          ${analogStep < analogSteps.length-1
+            ? `<button class="primary-btn" onclick="analogStep++; renderAnalogLearn()">הַבָּא ←</button>`
+            : `<button class="primary-btn" onclick="go('analog-practice')">בּוֹאוּ נְתַרְגֵּל! 🎯</button>`}
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(s.text);
+}
+
+/* ---------------- ANALOG PRACTICE ---------------- */
+function randomTime(){
+  const hour = 1 + Math.floor(Math.random()*12);
+  const minute = Math.random() < 0.5 ? 0 : 30;
+  return {hour, minute};
+}
+function fmt(h,m){ return `${h}:${String(m).padStart(2,'0')}`; }
+
+function newAnalogQuestion(){
+  const t = randomTime();
+  const correct = fmt(t.hour, t.minute);
+  const distractors = new Set();
+  while (distractors.size < 2){
+    let dh = t.hour + (Math.random()<0.5 ? 1 : -1);
+    if (dh < 1) dh = 12; if (dh > 12) dh = 1;
+    const dm = Math.random()<0.5 ? t.minute : (t.minute===0?30:0);
+    const cand = fmt(dh, dm);
+    if (cand !== correct) distractors.add(cand);
+  }
+  const options = [correct, ...distractors].sort(()=>Math.random()-0.5);
+  quizState = {t, correct, options, answered:false, correctCount: quizState?quizState.correctCount:0, total: quizState?quizState.total:0};
+  renderAnalogPractice();
+}
+
+function renderAnalogPractice(){
+  if (!quizState || quizState.options===undefined) { newAnalogQuestion(); return; }
+  const q = "אֵיזוֹ שָׁעָה מוֹפִיעָה עַל הַשָּׁעוֹן?";
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="quiz-question">${q}</div>
+        ${narrationControls(q)}
+        <div class="clock-wrap">${clockFace(quizState.t.hour, quizState.t.minute, {size:220})}</div>
+        <div class="options-row">
+          ${quizState.options.map(o=>`<button class="option-btn" data-opt="${o}" onclick="checkAnalog('${o}')">${o}</button>`).join('')}
+        </div>
+        <div class="feedback-box" id="feedback"></div>
+        <div class="progress-line">תְּשׁוּבוֹת נְכוֹנוֹת: ${quizState.correctCount} מִתּוֹךְ ${quizState.total}</div>
+        <div class="nav-row" id="nextRow"></div>
+        <div class="nav-row">
+          <button class="ghost-btn" onclick="go('analog-listen')">🎧 תַּרְגִּיל חָדָשׁ: הַקְשִׁיבוּ וּבַחֲרוּ</button>
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(q);
+}
+
+function checkAnalog(opt){
+  if (quizState.answered) return;
+  quizState.answered = true;
+  quizState.total++;
+  const ok = opt === quizState.correct;
+  if (ok) quizState.correctCount++;
+  document.querySelectorAll('.option-btn').forEach(b=>{
+    b.disabled = true;
+    if (b.dataset.opt === quizState.correct) b.classList.add('correct');
+    else if (b.dataset.opt === opt) b.classList.add('wrong');
+  });
+  showFeedback(ok);
+  if (ok) addStar();
+  document.getElementById('nextRow').innerHTML =
+    `<button class="primary-btn" onclick="newAnalogQuestion()">שְׁאֵלָה הַבָּאָה ←</button>
+     <button class="secondary-btn" onclick="quizState=null; go('analog-learn')">חֲזָרָה לְלִמּוּד</button>`;
+}
+
+function showFeedback(ok){
+  const box = document.getElementById('feedback');
+  const goodMsgs = ['כָּל הַכָּבוֹד! הַתְּשׁוּבָה נְכוֹנָה! ⭐','מְעֻלֶּה! אַתֶּם כּוֹכָבִים! 🌟','נִפְלָא, קָלַעְתֶּם בְּדִיּוּק!'];
+  const badMsgs = ['כִּמְעַט! בּוֹאוּ נְנַסֶּה שׁוּב בַּשְּׁאֵלָה הַבָּאָה.','אֵין דָּבָר, מִטָּעוּת לוֹמְדִים! נַמְשִׁיךְ לְתַרְגֵּל.','אַתֶּם מִתְקָרְבִים, בּוֹאוּ נַנְסֶה עוֹד פַּעַם.'];
+  const msg = ok ? goodMsgs[Math.floor(Math.random()*goodMsgs.length)] : badMsgs[Math.floor(Math.random()*badMsgs.length)];
+  box.textContent = msg;
+  box.className = `feedback-box show ${ok?'good':'bad'}`;
+  speak(msg);
+}
+
+/* ---------------- ANALOG LISTENING EXERCISE ---------------- */
+function newListenQuestion(){
+  const t = randomTime();
+  const pool = [t];
+  while (pool.length < 3){
+    let dh = t.hour + (Math.random()<0.5 ? 1 : -1);
+    if (dh < 1) dh = 12; if (dh > 12) dh = 1;
+    const dm = Math.random()<0.5 ? t.minute : (t.minute===0?30:0);
+    if (!pool.some(c=>c.hour===dh && c.minute===dm)) pool.push({hour:dh, minute:dm});
+  }
+  const options = pool.sort(()=>Math.random()-0.5);
+  quizState = {t, options, answered:false,
+    correctCount: (quizState && quizState.correctCount) || 0, total: (quizState && quizState.total) || 0};
+  renderListenPractice();
+}
+
+function renderListenPractice(){
+  if (!quizState || quizState.options===undefined) { newListenQuestion(); return; }
+  const phrase = timeToWords(quizState.t.hour, quizState.t.minute);
+  const q = `הַקְשִׁיבוּ לַשָּׁעָה, וּבַחֲרוּ אֶת הַשָּׁעוֹן הַמַּתְאִים`;
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="bonus-tag">🎧 תַּרְגִּיל הַקְשָׁבָה</div>
+        <div class="quiz-question">${q}</div>
+        <button class="speak-btn" onclick="say(currentNarration)">🔊 הַשְׁמִיעוּ אֶת הַשָּׁעָה</button>
+        <div class="options-row">
+          ${quizState.options.map((o,i)=>`
+            <button class="option-clock-btn" data-idx="${i}" onclick="checkListen(${i})">
+              ${clockFace(o.hour, o.minute, {size:130})}
+            </button>`).join('')}
+        </div>
+        <div class="feedback-box" id="feedback"></div>
+        <div class="progress-line">תְּשׁוּבוֹת נְכוֹנוֹת: ${quizState.correctCount} מִתּוֹךְ ${quizState.total}</div>
+        <div class="nav-row" id="nextRow"></div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  currentNarration = phrase;
+  speak(phrase);
+}
+
+function checkListen(idx){
+  if (quizState.answered) return;
+  quizState.answered = true;
+  quizState.total++;
+  const chosen = quizState.options[idx];
+  const ok = chosen.hour === quizState.t.hour && chosen.minute === quizState.t.minute;
+  if (ok) quizState.correctCount++;
+  document.querySelectorAll('.option-clock-btn').forEach((b,i)=>{
+    b.disabled = true;
+    const o = quizState.options[i];
+    if (o.hour===quizState.t.hour && o.minute===quizState.t.minute) b.classList.add('correct');
+    else if (i===idx) b.classList.add('wrong');
+  });
+  showFeedback(ok);
+  if (ok) addStar();
+  document.getElementById('nextRow').innerHTML =
+    `<button class="primary-btn" onclick="newListenQuestion()">שְׁאֵלָה הַבָּאָה ←</button>
+     <button class="secondary-btn" onclick="quizState=null; go('analog-practice')">תַּרְגִּיל רָגִיל</button>`;
+}
+
+/* ---------------- DIGITAL LEARN ---------------- */
+const digitalSteps = [
+  {
+    title: 'זֶה שָׁעוֹן דִּיגִיטָלִי',
+    text: 'בְּשָׁעוֹן דִּיגִיטָלִי אֵין מַחוֹגִים, רַק מִסְפָּרִים. הַמִּסְפָּרִים הָרִאשׁוֹנִים מַרְאִים אֶת הַשָּׁעָה, וְהָאַחֲרוֹנִים מַרְאִים אֶת הַדַּקּוֹת.',
+    clock: {hour:3, minute:0}
+  },
+  {
+    title: 'שָׁעָה עֲגֻלָּה',
+    text: 'כְּשֶׁכָּתוּב 03:00, זֶה אוֹמֵר שָׁלוֹשׁ בְּדִיּוּק, בְּדִיּוּק כְּמוֹ בְּשָׁעוֹן מְחוֹגִים.',
+    clock: {hour:3, minute:0}
+  },
+  {
+    title: 'חֲצִי שָׁעָה',
+    text: 'כְּשֶׁכָּתוּב 03:30, זֶה אוֹמֵר שָׁלוֹשׁ וָחֵצִי.',
+    clock: {hour:3, minute:30}
+  },
+  {
+    title: 'סוֹד קָטָן: לְיוֹם יֵשׁ 24 שָׁעוֹת',
+    text: 'בַּבֹּקֶר סוֹפְרִים 1 עַד 12, כְּמוֹ בְּשָׁעוֹן מְחוֹגִים. אַחֲרֵי הַצָּהֳרַיִם מַמְשִׁיכִים לִסְפֹּר: 13, 14, 15, וְכֵן הָלְאָה עַד 24. לְמָשָׁל, 14:00 זֶה בְּדִיּוּק כְּמוֹ 2:00 אַחֲרֵי הַצָּהֳרַיִם.',
+    clock: {hour:2, minute:0},
+    bonus:true
+  }
+];
+
+function renderDigitalLearn(){
+  const s = digitalSteps[digitalStep];
+  const dots = digitalSteps.map((_,i)=>`<div class="dot ${i===digitalStep?'active':''}"></div>`).join('');
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="step-title">${s.title}</div>
+        ${digitalBox(s.clock.hour, s.clock.minute)}
+        <p class="step-text">${s.text}</p>
+        ${s.bonus ? `
+          <div class="hint-table">
+            <span class="hint-chip">13 = 1</span>
+            <span class="hint-chip">14 = 2</span>
+            <span class="hint-chip">15 = 3</span>
+            <span class="hint-chip">... </span>
+            <span class="hint-chip">24 = 12</span>
+          </div>` : ''}
+        ${narrationControls(s.text)}
+        <div class="dots">${dots}</div>
+        <div class="nav-row">
+          ${digitalStep>0 ? `<button class="secondary-btn" onclick="digitalStep--; renderDigitalLearn()">→ חָזָרָה</button>` : ''}
+          ${digitalStep < digitalSteps.length-1
+            ? `<button class="primary-btn" onclick="digitalStep++; renderDigitalLearn()">הַבָּא ←</button>`
+            : `<button class="primary-btn" onclick="go('digital-practice')">בּוֹאוּ נְתַרְגֵּל! 🎯</button>`}
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(s.text);
+}
+
+/* ---------------- DIGITAL PRACTICE ---------------- */
+function newDigitalQuestion(){
+  const t = randomTime();
+  const pool = [t];
+  while (pool.length < 3){
+    let dh = t.hour + (Math.random()<0.5 ? 1 : -1);
+    if (dh < 1) dh = 12; if (dh > 12) dh = 1;
+    const dm = Math.random()<0.5 ? t.minute : (t.minute===0?30:0);
+    if (!pool.some(c=>c.hour===dh && c.minute===dm)) pool.push({hour:dh, minute:dm});
+  }
+  const options = pool.sort(()=>Math.random()-0.5);
+  quizState = {t, options, answered:false,
+    correctCount: (quizState && quizState.correctCount) || 0, total: (quizState && quizState.total) || 0};
+  renderDigitalPractice();
+}
+
+function renderDigitalPractice(){
+  if (!quizState || quizState.options===undefined) { newDigitalQuestion(); return; }
+  const q = "אֵיזֶה שָׁעוֹן מְחוֹגִים מַרְאֶה אֶת אוֹתָהּ הַשָּׁעָה?";
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="quiz-question">${q}</div>
+        ${narrationControls(q)}
+        ${digitalBox(quizState.t.hour, quizState.t.minute)}
+        <div class="options-row">
+          ${quizState.options.map((o,i)=>`
+            <button class="option-clock-btn" data-idx="${i}" onclick="checkDigital(${i})">
+              ${clockFace(o.hour, o.minute, {size:130})}
+            </button>`).join('')}
+        </div>
+        <div class="feedback-box" id="feedback"></div>
+        <div class="progress-line">תְּשׁוּבוֹת נְכוֹנוֹת: ${quizState.correctCount} מִתּוֹךְ ${quizState.total}</div>
+        <div class="nav-row" id="nextRow"></div>
+        <div class="nav-row">
+          <button class="ghost-btn" onclick="startBonusRound()">🌟 אֶתְגָּר מְיֻחָד: שְׁעוֹת אַחֲרֵי הַצָּהֳרַיִם</button>
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(q);
+}
+
+function checkDigital(idx){
+  if (quizState.answered) return;
+  quizState.answered = true;
+  quizState.total++;
+  const chosen = quizState.options[idx];
+  const ok = chosen.hour === quizState.t.hour && chosen.minute === quizState.t.minute;
+  if (ok) quizState.correctCount++;
+  document.querySelectorAll('.option-clock-btn').forEach((b,i)=>{
+    b.disabled = true;
+    const o = quizState.options[i];
+    if (o.hour===quizState.t.hour && o.minute===quizState.t.minute) b.classList.add('correct');
+    else if (i===idx) b.classList.add('wrong');
+  });
+  showFeedback(ok);
+  if (ok) addStar();
+  document.getElementById('nextRow').innerHTML =
+    `<button class="primary-btn" onclick="newDigitalQuestion()">שְׁאֵלָה הַבָּאָה ←</button>
+     <button class="secondary-btn" onclick="quizState=null; go('digital-learn')">חֲזָרָה לְלִמּוּד</button>`;
+}
+
+/* ---------------- DIGITAL BONUS ROUND ---------------- */
+function startBonusRound(){
+  bonusState = {round:0, correctCount:0, total:5};
+  nextBonusQuestion();
+}
+function nextBonusQuestion(){
+  if (bonusState.round >= bonusState.total){ renderBonusDone(); return; }
+  const afternoonHour = 13 + Math.floor(Math.random()*11);
+  const hour12 = afternoonHour - 12;
+  const minute = Math.random()<0.5 ? 0 : 30;
+  const pool = [{hour:hour12, minute}];
+  while (pool.length < 3){
+    let dh = hour12 + (Math.random()<0.5 ? 1 : -1);
+    if (dh < 1) dh = 12; if (dh > 12) dh = 1;
+    const dm = Math.random()<0.5 ? minute : (minute===0?30:0);
+    if (!pool.some(c=>c.hour===dh && c.minute===dm)) pool.push({hour:dh, minute:dm});
+  }
+  bonusState.options = pool.sort(()=>Math.random()-0.5);
+  bonusState.target = {hour:hour12, minute};
+  bonusState.hour24 = afternoonHour;
+  bonusState.answered = false;
+  renderBonusRound();
+}
+function renderBonusRound(){
+  const q = "אֵיזֶה שָׁעוֹן מְחוֹגִים מַתְאִים לַשָּׁעָה הַזֹּאת?";
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="bonus-tag">🌟 אֶתְגָּר: שְׁעוֹת אַחֲרֵי הַצָּהֳרַיִם (${bonusState.round+1}/${bonusState.total})</div>
+        <div class="quiz-question">${q}</div>
+        ${narrationControls(q)}
+        ${digitalBox(null, bonusState.target.minute, bonusState.hour24)}
+        <div class="hint-table">
+          <span class="hint-chip">13 = 1</span><span class="hint-chip">14 = 2</span>
+          <span class="hint-chip">15 = 3</span><span class="hint-chip">16 = 4</span>
+          <span class="hint-chip">17 = 5</span><span class="hint-chip">18 = 6</span>
+          <span class="hint-chip">19 = 7</span><span class="hint-chip">20 = 8</span>
+          <span class="hint-chip">21 = 9</span><span class="hint-chip">22 = 10</span>
+          <span class="hint-chip">23 = 11</span>
+        </div>
+        <div class="options-row">
+          ${bonusState.options.map((o,i)=>`
+            <button class="option-clock-btn" data-idx="${i}" onclick="checkBonus(${i})">
+              ${clockFace(o.hour, o.minute, {size:130})}
+            </button>`).join('')}
+        </div>
+        <div class="feedback-box" id="feedback"></div>
+        <div class="progress-line">תְּשׁוּבוֹת נְכוֹנוֹת: ${bonusState.correctCount} מִתּוֹךְ ${bonusState.round}</div>
+        <div class="nav-row" id="nextRow"></div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(q);
+}
+function checkBonus(idx){
+  if (bonusState.answered) return;
+  bonusState.answered = true;
+  const chosen = bonusState.options[idx];
+  const ok = chosen.hour === bonusState.target.hour && chosen.minute === bonusState.target.minute;
+  if (ok) bonusState.correctCount++;
+  document.querySelectorAll('.option-clock-btn').forEach((b,i)=>{
+    b.disabled = true;
+    const o = bonusState.options[i];
+    if (o.hour===bonusState.target.hour && o.minute===bonusState.target.minute) b.classList.add('correct');
+    else if (i===idx) b.classList.add('wrong');
+  });
+  showFeedback(ok);
+  if (ok) addStar();
+  bonusState.round++;
+  document.getElementById('nextRow').innerHTML =
+    `<button class="primary-btn" onclick="nextBonusQuestion()">${bonusState.round < bonusState.total ? 'שְׁאֵלָה הַבָּאָה ←' : 'סַיְּמוּ אֶת הָאֶתְגָּר 🏁'}</button>`;
+}
+function renderBonusDone(){
+  const perfect = bonusState.correctCount === bonusState.total;
+  if (perfect) addStar(3);
+  const msg = perfect
+    ? `כֹּל הַכָּבוֹד! עֲנִיתֶם נָכוֹן עַל כֹּל הַשְּׁאֵלוֹת! קִבַּלְתֶּם 3 כּוֹכָבִים בּוֹנוּס!`
+    : `סִיַּמְתֶּם אֶת הָאֶתְגָּר! עֲנִיתֶם נָכוֹן עַל ${bonusState.correctCount} מִתּוֹךְ ${bonusState.total}. אֶפְשָׁר לְנַסּוֹת שׁוּב מָתַי שֶׁתִּרְצוּ.`;
+  document.getElementById('app').innerHTML = `
+    ${topbar()}
+    <main>
+      <div class="content-card">
+        <div class="mascot-wrap">${mascotSVG(perfect?'cheer':'kind')}</div>
+        <div class="step-title">${perfect ? '🏆 אַלּוּפֵי הַשָּׁעוֹת!' : 'כָּל הַכָּבוֹד עַל הַנִּסָּיוֹן!'}</div>
+        <p class="step-text">${msg}</p>
+        ${narrationControls(msg)}
+        <div class="nav-row">
+          <button class="primary-btn" onclick="startBonusRound()">נַסּוּ שׁוּב 🔁</button>
+          <button class="secondary-btn" onclick="go('digital-practice')">חֲזָרָה לְתַרְגּוּל</button>
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(msg);
+}
+
+/* ---------------- Router ---------------- */
+function render(){
+  if (route === 'start') return renderStart();
+  if (route === 'home') return renderHome();
+  if (route === 'analog-learn') return renderAnalogLearn();
+  if (route === 'analog-practice'){ quizState=null; return renderAnalogPractice(); }
+  if (route === 'analog-listen'){ quizState=null; return renderListenPractice(); }
+  if (route === 'digital-learn') return renderDigitalLearn();
+  if (route === 'digital-practice'){ quizState=null; return renderDigitalPractice(); }
+}
+
+(async function init(){
+  await loadProgress();
+  render();
+})();
+</script>
+</body>
+</html>

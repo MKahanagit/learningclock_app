@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>מדריך קצר להורים – לומדים לקרוא שעון</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF3EC; --lavender:#D9CBF0; --mint:#C3EAD8; --sky:#C9E0F5;
+    --peach:#F6D3C2; --sun:#FBE7A1; --ink:#4E4260; --ink-soft:#6B5F80;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:26px; font-family:'Assistant', sans-serif; color:var(--ink);
+    background:var(--bg);
+  }
+  .sheet{
+    max-width:780px; margin:0 auto; background:#fff; border-radius:22px;
+    padding:34px 40px; box-shadow:0 8px 24px rgba(120,100,150,0.15);
+  }
+  h1{
+    font-family:'Rubik', sans-serif; font-size:1.9rem; font-weight:800;
+    margin:0 0 4px; text-align:center;
+  }
+  .sub{ text-align:center; color:var(--ink-soft); font-weight:700; margin-bottom:22px;}
+  .print-btn{
+    display:block; margin:0 auto 22px; background:var(--sun); border:none;
+    border-radius:999px; padding:10px 26px; font-weight:800; font-size:1rem;
+    cursor:pointer; font-family:'Assistant', sans-serif;
+  }
+  h2{
+    font-family:'Rubik', sans-serif; font-size:1.2rem; font-weight:700;
+    margin:20px 0 8px; padding-right:12px; border-right:5px solid var(--peach);
+  }
+  h2.mint{border-color:var(--mint);}
+  h2.sky{border-color:var(--sky);}
+  h2.lav{border-color:var(--lavender);}
+  p, li{ font-size:1.02rem; line-height:1.75; margin:0 0 8px; }
+  ul{ margin:0 0 6px; padding-inline-start: 24px; }
+  .tip-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:6px;}
+  .tip{
+    flex:1; min-width:200px; background:var(--bg); border-radius:16px;
+    padding:14px 16px; font-size:.98rem; font-weight:600;
+  }
+  footer{ text-align:center; font-size:.85rem; color:var(--ink-soft); margin-top:26px; opacity:.85;}
+  @media print{
+    body{ background:#fff; padding:0; }
+    .sheet{ box-shadow:none; padding:14px 22px; }
+    .print-btn{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <h1>לוֹמְדִים לִקְרֹא שָׁעוֹן ⏰</h1>
+  <p class="sub">מדריך קצר להורים</p>
+  <button class="print-btn" onclick="window.print()">🖨️ הדפסה</button>
+
+  <h2 class="peach">מה זו האפליקציה?</h2>
+  <p>
+    אפליקציה דיגיטלית ללימוד קריאת שעון בעברית, המיועדת לילדי גן וכיתה א׳ (גילאי 5–6).
+    היא מלמדת בשני מסלולים נפרדים: שעון מחוגים (אנלוגי) ושעון עם מספרים (דיגיטלי),
+    ומשלבת הסבר קולי, שלבי לימוד קצרים, ותרגול אינטראקטיבי עם משוב מיידי.
+  </p>
+
+  <h2 class="mint">איזו בעיה היא פותרת?</h2>
+  <p>
+    קריאת שעון היא מיומנות מופשטת יחסית לילדים בגיל הזה: היא דורשת בו-זמנית ספירה, הבנת מושג הזמן,
+    והתמצאות מרחבית (איזה מחוג הוא איזה, לאן הוא מצביע). בנוסף, ילדים נחשפים מדי יום לשני ייצוגים
+    שונים של אותה שעה – מחוגים בבית ובגן, ומספרים בטלפון, בטלוויזיה או במיקרוגל – ולעיתים מתקשים
+    לחבר בין השניים. האפליקציה מפרקת את המיומנות לשלבים קטנים וברורים, ומתרגלת כל ייצוג בנפרד
+    לפני שהיא מחברת ביניהם.
+  </p>
+
+  <h2 class="sky">איך להשתמש</h2>
+  <ul>
+    <li>מומלץ לשבת יחד עם הילד/ה, לפחות בפעמים הראשונות, כדי לעזור בקריאת ההוראות ובניווט.</li>
+    <li>כל מסך אפשר להאזין לו בלחיצה על כפתור ה־🔊, ולחזור עליו כמה פעמים שצריך.</li>
+    <li>מומלץ להתחיל מ"ללמוד" בכל מסלול, ורק אז לעבור ל"תרגול".</li>
+    <li>אין צורך לסיים הכול בישיבה אחת – כמה דקות ביום מספיקות, וההתקדמות (הכוכבים) נשמרת.</li>
+    <li>תנו לילד/ה ללחוץ בעצמו/ה על הכפתורים ולבחור תשובות – זה חלק חשוב מהלמידה.</li>
+  </ul>
+
+  <h2 class="lav">מה הילד/ה לומד/ת</h2>
+  <ul>
+    <li>שעון מחוגים: הבחנה בין המחוג הקטן (שעות) לגדול (דקות), קריאת שעה עגולה וחצי שעה.</li>
+    <li>שעון דיגיטלי: קריאת תצוגת מספרים, וחיבור ראשוני למושג שביום יש 24 שעות.</li>
+    <li>תרגילי הקשבה ותרגילי "אתגר" נוספים, לחיזוק ההבנה משני הכיוונים (משעון למספרים, וממספרים לשעון).</li>
+  </ul>
+
+  <div class="tip-row">
+    <div class="tip">💛 חגגו כל הצלחה, גם קטנה – המשוב באפליקציה מעודד תמיד, וכדאי להמשיך באותה רוח בבית.</div>
+    <div class="tip">🧩 טעות היא חלק מהלמידה – האפליקציה מזמינה לנסות שוב, בלי לחץ ובלי "תשובה נכונה יחידה" שצריך לשנן.</div>
+    <div class="tip">🕰️ שילוב עם שעון אמיתי בבית (מחוגים או דיגיטלי) מחזק מאוד את מה שנלמד באפליקציה.</div>
+  </div>
+
+  <footer>נוֹצַר עַל יְדֵי מִיכַל כַּהֲנָא</footer>
+</div>
+</body>
+</html>
