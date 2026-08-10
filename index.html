@@ -53,6 +53,7 @@
     gap:10px;
     margin-bottom:10px;
   }
+  .topbar-right{display:flex;align-items:center;gap:8px;}
   .pill-btn{
     border:none;
     border-radius:999px;
@@ -67,6 +68,13 @@
     transition:transform .12s ease;
   }
   .pill-btn:active{transform:translateY(2px) scale(.98);}
+  .icon-pill-btn{
+    border:none;border-radius:999px;
+    width:44px;height:44px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--card);cursor:pointer;font-size:1.3rem;
+    box-shadow:0 3px 0 rgba(0,0,0,0.06), 0 4px 14px rgba(120,100,150,0.12);
+  }
   .stars-badge{
     display:flex;align-items:center;gap:6px;
     background:var(--sun);
@@ -269,6 +277,24 @@
   }
   .splash-btn:active{transform:translateY(3px);box-shadow:none;}
 
+  .gender-row{
+    display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin-top:18px;
+  }
+  .gender-card{
+    background:var(--card);
+    border-radius:28px;
+    padding:20px 26px;
+    width:190px;
+    cursor:pointer;
+    border:5px solid transparent;
+    box-shadow:0 6px 0 rgba(0,0,0,0.05), 0 10px 24px rgba(120,100,150,0.14);
+    transition:transform .15s ease;
+  }
+  .gender-card:hover{transform:translateY(-4px);}
+  .gender-card.boy{border-color:var(--sky-strong);}
+  .gender-card.girl{border-color:var(--peach-strong);}
+  .gender-card h3{font-size:1.25rem;margin:10px 0 0;}
+
   @media (max-width:480px){
     .app-title{font-size:1.6rem;}
     .track-card{width:100%;}
@@ -280,6 +306,10 @@
 <div id="app"></div>
 
 <script>
+/* ---------------- Gender (for grammatically-matched feedback) ---------------- */
+let gender = null; // 'm' or 'f'
+function g(mText, fText){ return gender === 'f' ? fText : mText; }
+
 /* ---------------- Voice (narration) ---------------- */
 let heVoice = null;
 let audioUnlocked = false;
@@ -329,16 +359,17 @@ async function loadProgress(){
     if (r && r.value){
       const d = JSON.parse(r.value);
       stars = d.stars || 0;
+      gender = d.gender || null;
     }
-  }catch(e){ stars = 0; }
+  }catch(e){ stars = 0; gender = null; }
 }
 async function saveProgress(){
-  try{ await window.storage.set('clock-app-progress', JSON.stringify({stars}), false); }
+  try{ await window.storage.set('clock-app-progress', JSON.stringify({stars, gender}), false); }
   catch(e){ /* best effort */ }
 }
 function addStar(n){ stars += (n||1); saveProgress(); const b=document.getElementById('starsCount'); if(b) b.textContent = stars; }
 
-/* ---------------- Mascot ---------------- */
+/* ---------------- Mascot & character illustrations ---------------- */
 function mascotSVG(mood){
   const mouth = mood==='cheer'
     ? '<path d="M42 66 Q60 86 78 66" stroke="#4E4260" stroke-width="5" fill="none" stroke-linecap="round"/>'
@@ -359,6 +390,32 @@ function mascotSVG(mood){
       <circle cx="75" cy="55" r="5" fill="#4E4260"/>
       ${mouth}
     </g>
+  </svg>`;
+}
+
+function boySVG(){
+  return `
+  <svg width="96" height="96" viewBox="0 0 96 96">
+    <circle cx="48" cy="50" r="30" fill="#F6D3C2"/>
+    <path d="M20 42 Q48 14 76 42 L76 30 Q48 12 20 30 Z" fill="#4E4260"/>
+    <circle cx="38" cy="52" r="4.2" fill="#4E4260"/>
+    <circle cx="58" cy="52" r="4.2" fill="#4E4260"/>
+    <path d="M38 65 Q48 74 58 65" stroke="#4E4260" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M14 92 Q48 68 82 92 Z" fill="#8FBEE8"/>
+  </svg>`;
+}
+function girlSVG(){
+  return `
+  <svg width="96" height="96" viewBox="0 0 96 96">
+    <ellipse cx="24" cy="58" rx="10" ry="16" fill="#4E4260"/>
+    <ellipse cx="72" cy="58" rx="10" ry="16" fill="#4E4260"/>
+    <circle cx="48" cy="50" r="30" fill="#F6D3C2"/>
+    <path d="M18 40 Q48 10 78 40 Q78 26 48 22 Q18 26 18 40 Z" fill="#4E4260"/>
+    <circle cx="38" cy="52" r="4.2" fill="#4E4260"/>
+    <circle cx="58" cy="52" r="4.2" fill="#4E4260"/>
+    <path d="M38 65 Q48 74 58 65" stroke="#4E4260" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M14 92 Q48 68 82 92 Z" fill="#EFA987"/>
+    <path d="M60 24 q6 -6 12 0 q-2 6 -8 6 q-2 4 -6 2 q0 -4 2 -8z" fill="#EFA987"/>
   </svg>`;
 }
 
@@ -428,7 +485,10 @@ function topbar(){
   return `
   <div class="topbar">
     <button class="pill-btn" onclick="go('home')">🏠 בַּיִת</button>
-    <div class="stars-badge">⭐ <span id="starsCount">${stars}</span></div>
+    <div class="topbar-right">
+      <button class="icon-pill-btn" title="${g('שנה בחירה','שני בחירה')}" onclick="go('gender-select')">${gender==='f' ? '👧' : '👦'}</button>
+      <div class="stars-badge">⭐ <span id="starsCount">${stars}</span></div>
+    </div>
   </div>`;
 }
 
@@ -441,7 +501,7 @@ function narrationControls(text){
   if (!ttsSupported){
     return `<div class="no-audio-note">🔇 הַדְּפָדְפָן הַזֶּה לֹא תּוֹמֵךְ בְּהַקְרָאָה, אֲבָל אֶפְשָׁר לְהַמְשִׁיךְ לְפִי הַכָּתוּב</div>`;
   }
-  return `<button class="speak-btn" onclick="replay()">🔊 הַקְשִׁיבוּ</button>`;
+  return `<button class="speak-btn" onclick="replay()">🔊 ${g('הַקְשֵׁב','הַקְשִׁיבִי')}</button>`;
 }
 
 /* ---------------- START SPLASH (unlocks audio with a real tap) ---------------- */
@@ -459,12 +519,47 @@ function renderStart(){
 function unlockAndEnter(){
   audioUnlocked = true;
   say('שָׁלוֹם חֲבֵרִים! בּוֹאוּ נִלְמַד יַחַד לִקְרֹא שָׁעוֹן.');
+  go('gender-select');
+}
+
+/* ---------------- GENDER SELECT ---------------- */
+function renderGenderSelect(){
+  const q = 'סַפְּרוּ לִי קְצָת עַל עַצְמְכֶם, כְּדֵי שֶׁאוּכַל לְדַבֵּר אֲלֵיכֶם נָכוֹן.';
+  document.getElementById('app').innerHTML = `
+    ${gender ? topbar() : ''}
+    <main>
+      <div class="mascot-wrap">${mascotSVG('kind')}</div>
+      <div class="step-title">${g('מִי אַתָּה?','מִי אַתְּ?')}</div>
+      <p class="step-text">${q}</p>
+      ${narrationControls(q)}
+      <div class="gender-row">
+        <div class="gender-card boy" onclick="selectGender('m')">
+          ${boySVG()}
+          <h3>אֲנִי יֶלֶד</h3>
+        </div>
+        <div class="gender-card girl" onclick="selectGender('f')">
+          ${girlSVG()}
+          <h3>אֲנִי יַלְדָּה</h3>
+        </div>
+      </div>
+    </main>
+    ${footer()}
+  `;
+  speak(q);
+}
+function selectGender(gval){
+  gender = gval;
+  saveProgress();
   go('home');
 }
 
 /* ---------------- HOME ---------------- */
 function renderHome(){
-  const welcome = "אֶפְשָׁר לִבְחֹר בְּשָׁעוֹן מְחוֹגִים אוֹ בְּשָׁעוֹן דִּיגִיטָלִי.";
+  if (!gender){ go('gender-select'); return; }
+  const welcome = g(
+    'אַתָּה יָכוֹל לִבְחֹר בְּשָׁעוֹן מְחוֹגִים אוֹ בְּשָׁעוֹן דִּיגִיטָלִי.',
+    'אַתְּ יְכוֹלָה לִבְחֹר בְּשָׁעוֹן מְחוֹגִים אוֹ בְּשָׁעוֹן דִּיגִיטָלִי.'
+  );
   document.getElementById('app').innerHTML = `
     ${topbar()}
     <main>
@@ -522,6 +617,7 @@ const analogSteps = [
 function renderAnalogLearn(){
   const s = analogSteps[analogStep];
   const dots = analogSteps.map((_,i)=>`<div class="dot ${i===analogStep?'active':''}"></div>`).join('');
+  const nextLabel = g('בּוֹא נְתַרְגֵּל! 🎯','בּוֹאִי נְתַרְגֵּל! 🎯');
   document.getElementById('app').innerHTML = `
     ${topbar()}
     <main>
@@ -535,7 +631,7 @@ function renderAnalogLearn(){
           ${analogStep>0 ? `<button class="secondary-btn" onclick="analogStep--; renderAnalogLearn()">→ חָזָרָה</button>` : ''}
           ${analogStep < analogSteps.length-1
             ? `<button class="primary-btn" onclick="analogStep++; renderAnalogLearn()">הַבָּא ←</button>`
-            : `<button class="primary-btn" onclick="go('analog-practice')">בּוֹאוּ נְתַרְגֵּל! 🎯</button>`}
+            : `<button class="primary-btn" onclick="go('analog-practice')">${nextLabel}</button>`}
         </div>
       </div>
     </main>
@@ -571,6 +667,7 @@ function newAnalogQuestion(){
 function renderAnalogPractice(){
   if (!quizState || quizState.options===undefined) { newAnalogQuestion(); return; }
   const q = "אֵיזוֹ שָׁעָה מוֹפִיעָה עַל הַשָּׁעוֹן?";
+  const listenLabel = g('🎧 תַּרְגִּיל חָדָשׁ: הַקְשֵׁב וּבְחַר','🎧 תַּרְגִּיל חָדָשׁ: הַקְשִׁיבִי וּבַחֲרִי');
   document.getElementById('app').innerHTML = `
     ${topbar()}
     <main>
@@ -585,7 +682,7 @@ function renderAnalogPractice(){
         <div class="progress-line">תְּשׁוּבוֹת נְכוֹנוֹת: ${quizState.correctCount} מִתּוֹךְ ${quizState.total}</div>
         <div class="nav-row" id="nextRow"></div>
         <div class="nav-row">
-          <button class="ghost-btn" onclick="go('analog-listen')">🎧 תַּרְגִּיל חָדָשׁ: הַקְשִׁיבוּ וּבַחֲרוּ</button>
+          <button class="ghost-btn" onclick="go('analog-listen')">${listenLabel}</button>
         </div>
       </div>
     </main>
@@ -614,8 +711,14 @@ function checkAnalog(opt){
 
 function showFeedback(ok){
   const box = document.getElementById('feedback');
-  const goodMsgs = ['כָּל הַכָּבוֹד! הַתְּשׁוּבָה נְכוֹנָה! ⭐','מְעֻלֶּה! אַתֶּם כּוֹכָבִים! 🌟','נִפְלָא, קָלַעְתֶּם בְּדִיּוּק!'];
-  const badMsgs = ['כִּמְעַט! בּוֹאוּ נְנַסֶּה שׁוּב בַּשְּׁאֵלָה הַבָּאָה.','אֵין דָּבָר, מִטָּעוּת לוֹמְדִים! נַמְשִׁיךְ לְתַרְגֵּל.','אַתֶּם מִתְקָרְבִים, בּוֹאוּ נַנְסֶה עוֹד פַּעַם.'];
+  const goodMsgs = g(
+    ['כָּל הַכָּבוֹד! הַתְּשׁוּבָה נְכוֹנָה! ⭐','מְעֻלֶּה! אַתָּה כּוֹכָב! 🌟','נִפְלָא, קָלַעְתָּ בְּדִיּוּק!'],
+    ['כָּל הַכָּבוֹד! הַתְּשׁוּבָה נְכוֹנָה! ⭐','מְעֻלָּה! אַתְּ כּוֹכֶבֶת! 🌟','נִפְלָא, קָלַעַתְּ בְּדִיּוּק!']
+  );
+  const badMsgs = g(
+    ['כִּמְעַט! בּוֹא נְנַסֶּה שׁוּב בַּשְּׁאֵלָה הַבָּאָה.','אֵין דָּבָר, מִטָּעוּת לוֹמְדִים! נַמְשִׁיךְ לְתַרְגֵּל.','אַתָּה מִתְקָרֵב, בּוֹא נְנַסֶּה עוֹד פַּעַם.'],
+    ['כִּמְעַט! בּוֹאִי נְנַסֶּה שׁוּב בַּשְּׁאֵלָה הַבָּאָה.','אֵין דָּבָר, מִטָּעוּת לוֹמְדִים! נַמְשִׁיךְ לְתַרְגֵּל.','אַתְּ מִתְקָרֶבֶת, בּוֹאִי נְנַסֶּה עוֹד פַּעַם.']
+  );
   const msg = ok ? goodMsgs[Math.floor(Math.random()*goodMsgs.length)] : badMsgs[Math.floor(Math.random()*badMsgs.length)];
   box.textContent = msg;
   box.className = `feedback-box show ${ok?'good':'bad'}`;
@@ -641,14 +744,15 @@ function newListenQuestion(){
 function renderListenPractice(){
   if (!quizState || quizState.options===undefined) { newListenQuestion(); return; }
   const phrase = timeToWords(quizState.t.hour, quizState.t.minute);
-  const q = `הַקְשִׁיבוּ לַשָּׁעָה, וּבַחֲרוּ אֶת הַשָּׁעוֹן הַמַּתְאִים`;
+  const q = g('הַקְשֵׁב לַשָּׁעָה, וּבְחַר אֶת הַשָּׁעוֹן הַמַּתְאִים','הַקְשִׁיבִי לַשָּׁעָה, וּבַחֲרִי אֶת הַשָּׁעוֹן הַמַּתְאִים');
+  const playLabel = g('🔊 הַשְׁמַע אֶת הַשָּׁעָה','🔊 הַשְׁמִיעִי אֶת הַשָּׁעָה');
   document.getElementById('app').innerHTML = `
     ${topbar()}
     <main>
       <div class="content-card">
         <div class="bonus-tag">🎧 תַּרְגִּיל הַקְשָׁבָה</div>
         <div class="quiz-question">${q}</div>
-        <button class="speak-btn" onclick="say(currentNarration)">🔊 הַשְׁמִיעוּ אֶת הַשָּׁעָה</button>
+        <button class="speak-btn" onclick="say(currentNarration)">${playLabel}</button>
         <div class="options-row">
           ${quizState.options.map((o,i)=>`
             <button class="option-clock-btn" data-idx="${i}" onclick="checkListen(${i})">
@@ -714,6 +818,7 @@ const digitalSteps = [
 function renderDigitalLearn(){
   const s = digitalSteps[digitalStep];
   const dots = digitalSteps.map((_,i)=>`<div class="dot ${i===digitalStep?'active':''}"></div>`).join('');
+  const nextLabel = g('בּוֹא נְתַרְגֵּל! 🎯','בּוֹאִי נְתַרְגֵּל! 🎯');
   document.getElementById('app').innerHTML = `
     ${topbar()}
     <main>
@@ -735,7 +840,7 @@ function renderDigitalLearn(){
           ${digitalStep>0 ? `<button class="secondary-btn" onclick="digitalStep--; renderDigitalLearn()">→ חָזָרָה</button>` : ''}
           ${digitalStep < digitalSteps.length-1
             ? `<button class="primary-btn" onclick="digitalStep++; renderDigitalLearn()">הַבָּא ←</button>`
-            : `<button class="primary-btn" onclick="go('digital-practice')">בּוֹאוּ נְתַרְגֵּל! 🎯</button>`}
+            : `<button class="primary-btn" onclick="go('digital-practice')">${nextLabel}</button>`}
         </div>
       </div>
     </main>
@@ -887,8 +992,15 @@ function renderBonusDone(){
   const perfect = bonusState.correctCount === bonusState.total;
   if (perfect) addStar(3);
   const msg = perfect
-    ? `כֹּל הַכָּבוֹד! עֲנִיתֶם נָכוֹן עַל כֹּל הַשְּׁאֵלוֹת! קִבַּלְתֶּם 3 כּוֹכָבִים בּוֹנוּס!`
-    : `סִיַּמְתֶּם אֶת הָאֶתְגָּר! עֲנִיתֶם נָכוֹן עַל ${bonusState.correctCount} מִתּוֹךְ ${bonusState.total}. אֶפְשָׁר לְנַסּוֹת שׁוּב מָתַי שֶׁתִּרְצוּ.`;
+    ? g(
+        'כָּל הַכָּבוֹד! עָנִיתָ נָכוֹן עַל כֹּל הַשְּׁאֵלוֹת! קִבַּלְתָּ 3 כּוֹכָבִים בּוֹנוּס!',
+        'כָּל הַכָּבוֹד! עָנִית נָכוֹן עַל כֹּל הַשְּׁאֵלוֹת! קִבַּלְתְּ 3 כּוֹכָבִים בּוֹנוּס!'
+      )
+    : g(
+        `סִיַּמְתָּ אֶת הָאֶתְגָּר! עָנִיתָ נָכוֹן עַל ${bonusState.correctCount} מִתּוֹךְ ${bonusState.total}. אֶפְשָׁר לְנַסּוֹת שׁוּב מָתַי שֶׁתִּרְצֶה.`,
+        `סִיַּמְתְּ אֶת הָאֶתְגָּר! עָנִית נָכוֹן עַל ${bonusState.correctCount} מִתּוֹךְ ${bonusState.total}. אֶפְשָׁר לְנַסּוֹת שׁוּב מָתַי שֶׁתִּרְצִי.`
+      );
+  const tryAgainLabel = g('נַסֵּה שׁוּב 🔁','נַסִּי שׁוּב 🔁');
   document.getElementById('app').innerHTML = `
     ${topbar()}
     <main>
@@ -898,7 +1010,7 @@ function renderBonusDone(){
         <p class="step-text">${msg}</p>
         ${narrationControls(msg)}
         <div class="nav-row">
-          <button class="primary-btn" onclick="startBonusRound()">נַסּוּ שׁוּב 🔁</button>
+          <button class="primary-btn" onclick="startBonusRound()">${tryAgainLabel}</button>
           <button class="secondary-btn" onclick="go('digital-practice')">חֲזָרָה לְתַרְגּוּל</button>
         </div>
       </div>
@@ -911,6 +1023,7 @@ function renderBonusDone(){
 /* ---------------- Router ---------------- */
 function render(){
   if (route === 'start') return renderStart();
+  if (route === 'gender-select') return renderGenderSelect();
   if (route === 'home') return renderHome();
   if (route === 'analog-learn') return renderAnalogLearn();
   if (route === 'analog-practice'){ quizState=null; return renderAnalogPractice(); }
