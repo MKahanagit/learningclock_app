@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>לומדים עם חוכמה 🦉</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8ED;
+    --ink:#3A3352;
+    --blue:#4FB6E8;
+    --blue-dark:#2E93C6;
+    --purple:#9B6BD9;
+    --purple-dark:#7B4EC0;
+    --orange:#FF8A5C;
+    --orange-dark:#F06B3A;
+    --green:#5FC98D;
+    --amber:#F2B84B;
+    --red:#F26D6D;
+    --card:#FFFFFF;
+    --shadow: 0 6px 0 rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Rubik', sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, #FFE9C7 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, #CDEBFF 0%, transparent 45%),
+      var(--cream);
+    min-height:100vh;
+    color:var(--ink);
+    overflow-x:hidden;
+  }
+  #app{
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    padding:16px 16px 40px;
+    position:relative;
+  }
+  h1,h2,h3{font-family:'Varela Round','Rubik',sans-serif; margin:0;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .icon-btn{
+    background:var(--card); border:none; border-radius:16px;
+    width:52px; height:52px; font-size:24px; cursor:pointer;
+    box-shadow:var(--shadow);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:translateY(4px); box-shadow:none;}
+  .mascot-row{ display:flex; align-items:center; gap:10px; margin:14px 0 18px;}
+  .mascot{font-size:52px; filter:drop-shadow(0 4px 0 rgba(0,0,0,0.08));}
+  .bubble{
+    background:var(--card); border-radius:20px; padding:12px 16px;
+    box-shadow:var(--shadow); flex:1; font-size:16px; font-weight:500;
+    position:relative; min-height:20px;
+  }
+  .home-title{ text-align:center; font-size:30px; font-weight:900; color:var(--ink); margin:8px 0 4px;}
+  .home-sub{ text-align:center; color:#8A83A0; font-size:15px; margin-bottom:22px;}
+  .domain-card{
+    display:flex; align-items:center; gap:16px;
+    border-radius:26px; padding:18px 20px; margin-bottom:16px;
+    cursor:pointer; border:none; width:100%; text-align:right;
+    box-shadow:var(--shadow); color:white; font-family:'Rubik';
+    transition:transform .12s;
+  }
+  .domain-card:active{transform:translateY(4px); box-shadow:none;}
+  .domain-card.reading{background:linear-gradient(135deg,var(--blue),var(--blue-dark));}
+  .domain-card.writing{background:linear-gradient(135deg,var(--purple),var(--purple-dark));}
+  .domain-card.math{background:linear-gradient(135deg,var(--orange),var(--orange-dark));}
+  .domain-emoji{font-size:44px;}
+  .domain-info{flex:1;}
+  .domain-info h2{font-size:22px;}
+  .domain-info p{margin:4px 0 0; font-size:13px; opacity:0.92;}
+  .progress-track{
+    background:rgba(255,255,255,0.35); border-radius:20px; height:10px; margin-top:8px; overflow:hidden;
+  }
+  .progress-fill{background:white; height:100%; border-radius:20px; transition:width .4s;}
+
+  .stage-list{ display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+  .stage-item{
+    display:flex; align-items:center; gap:14px;
+    background:var(--card); border-radius:18px; padding:14px 16px;
+    box-shadow:var(--shadow); cursor:pointer; border:none; width:100%; text-align:right;
+  }
+  .stage-item.locked{opacity:0.45; cursor:not-allowed;}
+  .stage-item.current{outline:3px solid var(--amber);}
+  .stage-num{
+    width:42px; height:42px; border-radius:50%; background:var(--cream);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex-shrink:0;
+  }
+  .stage-item.done .stage-num{background:var(--green); color:white;}
+  .stage-title{flex:1; font-weight:600; font-size:16px;}
+  .stage-check{font-size:20px;}
+
+  .top-progress{
+    display:flex; align-items:center; gap:10px; margin:6px 0 16px; font-size:14px; color:#8A83A0; font-weight:500;
+  }
+  .top-progress .bar{flex:1; height:8px; background:#eee; border-radius:8px; overflow:hidden;}
+  .top-progress .bar-fill{height:100%; border-radius:8px;}
+
+  .teach-card{
+    background:var(--card); border-radius:28px; padding:28px 20px; text-align:center;
+    box-shadow:var(--shadow); margin-top:10px;
+  }
+  .big-letter{font-size:110px; font-weight:900; line-height:1;}
+  .letter-name{font-size:18px; color:#8A83A0; margin-top:6px;}
+  .example-row{
+    display:flex; align-items:center; justify-content:center; gap:10px; margin-top:18px;
+    background:var(--cream); border-radius:18px; padding:14px;
+  }
+  .example-emoji{font-size:40px;}
+  .example-word{font-size:26px; font-weight:700;}
+  .final-note{margin-top:14px; font-size:15px; background:#F3ECFF; border-radius:14px; padding:10px 14px; color:var(--purple-dark); font-weight:600;}
+
+  .btn{
+    border:none; border-radius:18px; padding:16px 20px; font-size:18px; font-weight:700;
+    font-family:'Rubik'; cursor:pointer; box-shadow:var(--shadow); color:white; width:100%;
+    transition:transform .1s;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:none;}
+  .btn.primary{background:linear-gradient(135deg,var(--green),#3FA872);}
+  .btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue-dark));}
+  .btn.amber{background:linear-gradient(135deg,var(--amber),#DE9E2E); color:var(--ink);}
+  .btn.ghost{background:var(--card); color:var(--ink); box-shadow:var(--shadow);}
+  .btn.small{padding:10px 14px; font-size:15px; width:auto;}
+  .btn-row{display:flex; gap:10px; margin-top:16px;}
+  .btn-row .btn{flex:1;}
+
+  .options-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px;}
+  .option-btn{
+    background:var(--card); border:3px solid transparent; border-radius:20px; padding:20px 10px;
+    font-size:34px; cursor:pointer; box-shadow:var(--shadow); font-family:'Rubik';
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .option-btn .lbl{font-size:16px; font-weight:600; color:var(--ink);}
+  .option-btn:active{transform:translateY(3px);}
+  .option-btn.correct{border-color:var(--green); background:#EAFBF1;}
+  .option-btn.wrong{border-color:var(--red); background:#FDEAEA; opacity:0.6;}
+  .option-btn:disabled{cursor:not-allowed;}
+
+  .feedback-banner{
+    margin-top:16px; padding:14px 16px; border-radius:16px; font-weight:700; text-align:center; font-size:17px;
+    display:none;
+  }
+  .feedback-banner.show{display:block;}
+  .feedback-banner.good{background:#EAFBF1; color:#238054;}
+  .feedback-banner.bad{background:#FDEEDF; color:#B45B18;}
+
+  .hint-btn{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--amber); border:none; border-radius:30px; padding:14px 26px;
+    font-size:16px; font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.18); cursor:pointer;
+    display:flex; align-items:center; gap:8px; z-index:50; max-width:480px; width:calc(100% - 32px);
+    justify-content:center;
+  }
+  .mic-circle{
+    width:130px; height:130px; border-radius:50%; margin:20px auto; cursor:pointer;
+    background:linear-gradient(135deg,var(--blue),var(--blue-dark)); display:flex; align-items:center; justify-content:center;
+    font-size:56px; box-shadow:0 8px 0 rgba(0,0,0,0.1); color:white; transition:transform .15s;
+  }
+  .mic-circle.listening{animation:pulse 1s infinite; background:linear-gradient(135deg,var(--red),#C94848);}
+  @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.08);}100%{transform:scale(1);}}
+  .word-display{font-size:48px; font-weight:900; text-align:center; margin:10px 0;}
+  .heard-text{ text-align:center; font-size:16px; color:#8A83A0; min-height:22px;}
+
+  canvas.trace-canvas{
+    background:white; border-radius:22px; touch-action:none; display:block; margin:14px auto; box-shadow:var(--shadow);
+  }
+
+  .dots-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; justify-items:center; margin:16px 0;}
+  .dots-grid span{font-size:34px;}
+
+  .celebrate{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; background:rgba(255,248,237,0.97); z-index:100; text-align:center; padding:20px;}
+  .celebrate .emoji{font-size:90px; margin-bottom:10px;}
+  .celebrate h2{font-size:26px; margin-bottom:8px;}
+  .celebrate p{color:#8A83A0; margin-bottom:24px;}
+
+  ::selection{background:var(--amber);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ DATA ============ */
+const LETTERS = [
+  {ch:'א', name:'אָלֶף', word:'אַרְיֵה', emoji:'🦁'},
+  {ch:'ב', name:'בֵּית', word:'בַּיִת', emoji:'🏠'},
+  {ch:'ג', name:'גִּימֶל', word:'גָּמָל', emoji:'🐫'},
+  {ch:'ד', name:'דָּלֶת', word:'דָּג', emoji:'🐟'},
+  {ch:'ה', name:'הֵא', word:'הַר', emoji:'⛰️'},
+  {ch:'ו', name:'וָו', word:'וֶרֶד', emoji:'🌹'},
+  {ch:'ז', name:'זַיִן', word:'זֶבְּרָה', emoji:'🦓'},
+  {ch:'ח', name:'חֵית', word:'חָתוּל', emoji:'🐱'},
+  {ch:'ט', name:'טֵית', word:'טֶלֶפוֹן', emoji:'📞'},
+  {ch:'י', name:'יוֹד', word:'יֶלֶד', emoji:'👦'},
+  {ch:'כ', name:'כָּף', word:'כֶּלֶב', emoji:'🐶', final:'ך', finalNote:'כשהאות כ״ף נמצאת בסוף המילה, היא נראית כך: ך'},
+  {ch:'ל', name:'לָמֶד', word:'לֵב', emoji:'❤️'},
+  {ch:'מ', name:'מֵם', word:'מַיִם', emoji:'💧', final:'ם', finalNote:'כשהאות מ״ם נמצאת בסוף המילה, היא נראית כך: ם'},
+  {ch:'נ', name:'נוּן', word:'נָחָשׁ', emoji:'🐍', final:'ן', finalNote:'כשהאות נו״ן נמצאת בסוף המילה, היא נראית כך: ן'},
+  {ch:'ס', name:'סָמֶך', word:'סוּס', emoji:'🐴'},
+  {ch:'ע', name:'עַיִן', word:'עֵץ', emoji:'🌳'},
+  {ch:'פ', name:'פֵּא', word:'פִּיל', emoji:'🐘', final:'ף', finalNote:'כשהאות פ״א נמצאת בסוף המילה, היא נראית כך: ף'},
+  {ch:'צ', name:'צַדִי', word:'צִפּוֹר', emoji:'🐦', final:'ץ', finalNote:'כשהאות צד״י נמצאת בסוף המילה, היא נראית כך: ץ'},
+  {ch:'ק', name:'קוֹף', word:'קוֹף', emoji:'🐵'},
+  {ch:'ר', name:'רֵישׁ', word:'רַכֶּבֶת', emoji:'🚂'},
+  {ch:'ש', name:'שִׁין', word:'שֶׁמֶשׁ', emoji:'☀️'},
+  {ch:'ת', name:'תָיו', word:'תַּפּוּחַ', emoji:'🍎'},
+];
+
+const FINALS = [
+  {base:'כ', final:'ך', baseName:'כָּף', word:'מֶלֶךְ', emoji:'👑'},
+  {base:'מ', final:'ם', baseName:'מֵם', word:'יָם', emoji:'🌊'},
+  {base:'נ', final:'ן', baseName:'נוּן', word:'בֵּן', emoji:'👦'},
+  {base:'פ', final:'ף', baseName:'פֵּא', word:'עָנָף', emoji:'🌿'},
+  {base:'צ', final:'ץ', baseName:'צַדִי', word:'עֵץ', emoji:'🌳'},
+];
+
+const NIQUD = [
+  {sign:'ַ', name:'פַּתָח', sound:'a', ex:'בַּ', explain:'הסימן פתח הוא קו אלכסוני קטן מתחת לאות, ונשמע כמו הצליל א, כמו במילה אַבָּא'},
+  {sign:'ָ', name:'קָמָץ', sound:'a', ex:'בָּ', explain:'הסימן קמץ נראה כמו האות ת הפוכה מתחת לאות, ולרוב נשמע גם הוא כמו הצליל א, כמו במילה קָם'},
+  {sign:'ֶ', name:'סֶגּוֹל', sound:'e', ex:'בֶּ', explain:'הסימן סגול הוא שלוש נקודות בצורת משולש מתחת לאות, ונשמע כמו הצליל אֶ, כמו במילה יֶלֶד'},
+  {sign:'ֵ', name:'צֵירֵה', sound:'e', ex:'בֵּ', explain:'הסימן צירה הוא שתי נקודות זו לצד זו מתחת לאות, ונשמע גם הוא כמו הצליל אֶ, כמו במילה תֵּה'},
+  {sign:'ִ', name:'חִירִיק', sound:'i', ex:'בִּ', explain:'הסימן חיריק הוא נקודה אחת מתחת לאות, ונשמע כמו הצליל אִי, כמו בתחילת המילה אִמָּא'},
+  {sign:'ֹ', name:'חוֹלָם', sound:'o', ex:'בֹּ', explain:'הסימן חולם הוא נקודה קטנה מעל האות, ונשמע כמו הצליל אוֹ, כמו במילה עוֹגָה'},
+  {sign:'ֻ', name:'קֻבּוּץ', sound:'u', ex:'בֻּ', explain:'הסימן קובוץ הוא שלוש נקודות אלכסוניות מתחת לאות, ונשמע כמו הצליל אוּ, כמו במילה חֻלְצָה'},
+  {sign:'ְ', name:'שְׁוָא', sound:'(שקט)', ex:'בְּ', explain:'הסימן שווא הוא שתי נקודות זו מעל זו מתחת לאות, ולרוב הוא כמעט שקט, בקושי שומעים אותו'},
+];
+
+const NIQUD_WORDS = ['בַּיִת','יֶלֶד','סֵפֶר','דָּג','שֶׁמֶשׁ','גַּן','אִמָּא','אַבָּא'];
+const WORDS_TO_READ = ['אבא','אמא','בית','דג','ילד','שמש','ספר','גן'];
+
+const READING_STAGES = [];
+LETTERS.forEach(L=>{
+  READING_STAGES.push({kind:'letter', letter:L, title:`האות ${L.ch}`});
+  if(L.final){
+    const f = FINALS.find(x=>x.base===L.ch);
+    READING_STAGES.push({kind:'letterFinal', data:f, title:`אות סופית ${f.final}`});
+  }
+});
+READING_STAGES.push({kind:'niqud', title:'תנועות וניקוד'});
+NIQUD_WORDS.forEach(w=> READING_STAGES.push({kind:'readword', word:w, title:`קוראים עם ניקוד: ${w.replace(/[\u0591-\u05C7]/g,'')}`}));
+WORDS_TO_READ.forEach(w=> READING_STAGES.push({kind:'readword', word:w, title:`קוראים את המילה ${w}`}));
+
+const WRITING_STAGES = [];
+LETTERS.forEach(L=>{
+  WRITING_STAGES.push({kind:'trace', letter:L, title:`כותבים את האות ${L.ch}`});
+  if(L.final){
+    const f = FINALS.find(x=>x.base===L.ch);
+    WRITING_STAGES.push({kind:'trace', letter:{ch:f.final, name:`${f.baseName} סופית`, isFinal:true, base:f.base, word:f.word, emoji:f.emoji}, title:`כותבים אות סופית ${f.final}`});
+  }
+});
+NIQUD_WORDS.forEach(w=> WRITING_STAGES.push({kind:'traceWord', word:w, title:`כותבים את המילה ${w.replace(/[\u0591-\u05C7]/g,'')}`}));
+
+const MATH_STAGES = [
+  {kind:'count', range:[1,5], title:'סופרים עד 5'},
+  {kind:'count', range:[6,10], title:'סופרים עד 10'},
+  {kind:'subitize', title:'כמה יש? (זיהוי מהיר)'},
+  {kind:'compare', title:'גדול, קטן או שווה?'},
+  {kind:'add', range:[1,5], title:'חיבור עד 5'},
+  {kind:'add', range:[1,10], title:'חיבור עד 10'},
+  {kind:'subtract', range:[1,10], title:'חיסור עד 10'},
+  {kind:'numbers100', title:'הכרת מספרים עד 100'},
+];
+
+const DOMAINS = {
+  reading:{label:'קריאה', emoji:'📖', color:'reading', stages:READING_STAGES},
+  writing:{label:'כתיבה', emoji:'✏️', color:'writing', stages:WRITING_STAGES},
+  math:{label:'חשבון', emoji:'🔢', color:'math', stages:MATH_STAGES},
+};
+
+const STRATEGIES = {
+  letter: (L) => g(`אסטרטגיה: תקשרי את צורת האות למילה שאת מכירה, כמו ${L.word}`, `אסטרטגיה: תקשר את צורת האות למילה שאתה מכיר, כמו ${L.word}`),
+  letterFinal: () => g('אסטרטגיה: זכרי - הצורה הסופית מופיעה רק בסוף מילה, אף פעם לא בהתחלה', 'אסטרטגיה: זכור - הצורה הסופית מופיעה רק בסוף מילה, אף פעם לא בהתחלה'),
+  niqud: () => g('אסטרטגיה: שימי לב איפה הסימן ביחס לאות - האם הוא מתחת, מעל, או בתוך האות', 'אסטרטגיה: שים לב איפה הסימן ביחס לאות - האם הוא מתחת, מעל, או בתוך האות'),
+  readword: () => g('אסטרטגיה: פרקי את המילה להברות, קראי כל הברה בנפרד ואז חברי אותן יחד', 'אסטרטגיה: פרק את המילה להברות, קרא כל הברה בנפרד ואז חבר אותן יחד'),
+  trace: () => g('אסטרטגיה: התחילי לכתוב מלמעלה ועקבי אחרי הקו הדהוי לאט ובנחת', 'אסטרטגיה: התחל לכתוב מלמעלה ועקוב אחרי הקו הדהוי לאט ובנחת'),
+  traceWord: () => g('אסטרטגיה: כתבי אות אחר אות מימין לשמאל, ועצרי לנשום בין אות לאות', 'אסטרטגיה: כתוב אות אחר אות מימין לשמאל, ועצור לנשום בין אות לאות'),
+  count: () => g('אסטרטגיה: געי בכל פריט פעם אחת בזמן שאת סופרת בקול, כדי לא לספור פעמיים', 'אסטרטגיה: גע בכל פריט פעם אחת בזמן שאתה סופר בקול, כדי לא לספור פעמיים'),
+  subitize: () => g('אסטרטגיה: נסי לחלק את הקבוצה לצמדים קטנים כדי לזהות את הכמות מהר בלי לספור', 'אסטרטגיה: נסה לחלק את הקבוצה לצמדים קטנים כדי לזהות את הכמות מהר בלי לספור'),
+  compare: () => 'אסטרטגיה: המספר שסופרים אליו רחוק יותר הוא הגדול מבין השניים. אם המספרים זהים - הם שווים',
+  add: () => g('אסטרטגיה: התחילי מהמספר הגדול יותר, והמשיכי לספור באצבעות את המספר הקטן', 'אסטרטגיה: התחל מהמספר הגדול יותר, והמשך לספור באצבעות את המספר הקטן'),
+  subtract: () => g('אסטרטגיה: התחילי מהמספר הגדול, וספרי אחורה באצבעות את הכמות שמורידים', 'אסטרטגיה: התחל מהמספר הגדול, וספור אחורה באצבעות את הכמות שמורידים'),
+  numbers100: () => g('אסטרטגיה: חשבי כל מספר כעשרות ויחידות - למשל 47 זה 4 עשרות ועוד 7 יחידות', 'אסטרטגיה: חשוב כל מספר כעשרות ויחידות - למשל 47 זה 4 עשרות ועוד 7 יחידות'),
+};
+function strategyBox(text){
+  return `<div class="final-note" style="background:#FFF3D6;color:#8A6412;margin-top:12px">💡 <b>אסטרטגיה:</b> ${text}</div>`;
+}
+
+const CORRECT_PHRASES_F = ['כל הכבוד! ענית נכון', 'מעולה, איזה יופי', 'נכון מאוד! את חכמה גדולה', 'וואו, כל הכבוד לך', 'יש! פגעת בול'];
+const CORRECT_PHRASES_M = ['כל הכבוד! ענית נכון', 'מעולה, איזה יופי', 'נכון מאוד! אתה חכם גדול', 'וואו, כל הכבוד לך', 'יש! פגעת בול'];
+const WRONG_PHRASES_F = ['כמעט! בואי ננסה שוב', 'לא נורא, זה בסדר לטעות. ננסה שוב', 'אני מאמינה בך, ננסה עוד פעם', 'כל התחלה קשה, בואי ננסה שוב'];
+const WRONG_PHRASES_M = ['כמעט! בוא ננסה שוב', 'לא נורא, זה בסדר לטעות. ננסה שוב', 'אני מאמינה בך, ננסה עוד פעם', 'כל התחלה קשה, בוא ננסה שוב'];
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function correctPhrase(){ return pick(GENDER==='m'?CORRECT_PHRASES_M:CORRECT_PHRASES_F); }
+function wrongPhrase(){ return pick(GENDER==='m'?WRONG_PHRASES_M:WRONG_PHRASES_F); }
+function enc(obj){ return JSON.stringify(obj).replace(/"/g,'&quot;'); }
+/* gender: 'f' (feminine address) or 'm' (masculine address) - chosen by the child at start */
+let GENDER = 'f';
+function g(fem, masc){ return GENDER==='m' ? masc : fem; }
+
+/* ============ VOICE ============ */
+let heVoice = null;
+function pickVoice(){
+  try{
+    const voices = speechSynthesis.getVoices();
+    heVoice = voices.find(v=>/he|iw/i.test(v.lang) && /female|carmit|siri|noa/i.test(v.name))
+      || voices.find(v=>/he|iw/i.test(v.lang))
+      || null;
+  }catch(e){}
+}
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = pickVoice;
+  pickVoice();
+  /* iOS/Safari has a known bug where the speech queue silently pauses itself
+     during a session; periodically nudging resume() keeps the guiding voice
+     working throughout use, not just on the first screen. */
+  setInterval(()=>{ try{ if(speechSynthesis.paused) speechSynthesis.resume(); }catch(e){} }, 4000);
+}
+function speak(text){
+  return new Promise(resolve=>{
+    if(!('speechSynthesis' in window)){resolve(); return;}
+    try{
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = heVoice ? heVoice.lang : 'he-IL';
+      if(heVoice) u.voice = heVoice;
+      u.rate = 0.92; u.pitch = 1.2;
+      u.onend = resolve; u.onerror = resolve;
+      speechSynthesis.speak(u);
+    }catch(e){resolve();}
+  });
+}
+
+/* ============ STORAGE ============ */
+/* Uses Claude's window.storage when available (inside claude.ai), and falls
+   back to the browser's localStorage when running as a standalone hosted
+   page (e.g. GitHub Pages) so progress still saves for each child/device. */
+async function loadProgress(domain){
+  try{
+    if(window.storage && window.storage.get){
+      const r = await window.storage.get('progress:'+domain, false);
+      if(r && r.value) return JSON.parse(r.value);
+      return {stageIndex:0, completed:{}};
+    }
+  }catch(e){}
+  try{
+    const raw = localStorage.getItem('progress:'+domain);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {stageIndex:0, completed:{}};
+}
+async function saveProgress(domain, data){
+  try{
+    if(window.storage && window.storage.set){
+      await window.storage.set('progress:'+domain, JSON.stringify(data), false);
+      return;
+    }
+  }catch(e){}
+  try{ localStorage.setItem('progress:'+domain, JSON.stringify(data)); }catch(e){}
+}
+async function loadGender(){
+  try{
+    if(window.storage && window.storage.get){
+      const r = await window.storage.get('gender', false);
+      if(r && r.value) return r.value;
+      return null;
+    }
+  }catch(e){}
+  try{ return localStorage.getItem('gender'); }catch(e){ return null; }
+}
+async function saveGender(val){
+  try{
+    if(window.storage && window.storage.set){
+      await window.storage.set('gender', val, false);
+      return;
+    }
+  }catch(e){}
+  try{ localStorage.setItem('gender', val); }catch(e){}
+}
+let PROGRESS = {reading:null, writing:null, math:null};
+async function ensureLoaded(domain){
+  if(!PROGRESS[domain]) PROGRESS[domain] = await loadProgress(domain);
+  return PROGRESS[domain];
+}
+
+/* ============ APP STATE / ROUTER ============ */
+const app = document.getElementById('app');
+let currentHint = null;
+
+function topbar(title){
+  return `<div class="topbar">
+    <button class="icon-btn" onclick="goHome()">🏠</button>
+    <h2 style="font-size:19px;">${title||''}</h2>
+    <button class="icon-btn" onclick="window.__back && window.__back()">⬅️</button>
+  </div>`;
+}
+
+async function goHome(){
+  window.__back = goHome;
+  await ensureLoaded('reading'); await ensureLoaded('writing'); await ensureLoaded('math');
+  const pct = d => Math.round((Object.keys(PROGRESS[d].completed).length / DOMAINS[d].stages.length)*100);
+  app.innerHTML = `
+    <div class="mascot-row">
+      <div class="mascot">🦉</div>
+      <div class="bubble" id="bubble">שלום! אני חוכמה הינשופה. על מה נלמד היום?</div>
+    </div>
+    <div class="home-title">לומדים עם חוכמה</div>
+    <div class="home-sub">קריאה • כתיבה • חשבון</div>
+    <button class="domain-card reading" onclick="openDomain('reading')">
+      <div class="domain-emoji">📖</div>
+      <div class="domain-info">
+        <h2>קריאה</h2>
+        <p>שלב ${Math.min(PROGRESS.reading.stageIndex+1, READING_STAGES.length)} מתוך ${READING_STAGES.length}</p>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct('reading')}%"></div></div>
+      </div>
+    </button>
+    <button class="domain-card writing" onclick="openDomain('writing')">
+      <div class="domain-emoji">✏️</div>
+      <div class="domain-info">
+        <h2>כתיבה</h2>
+        <p>שלב ${Math.min(PROGRESS.writing.stageIndex+1, WRITING_STAGES.length)} מתוך ${WRITING_STAGES.length}</p>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct('writing')}%"></div></div>
+      </div>
+    </button>
+    <button class="domain-card math" onclick="openDomain('math')">
+      <div class="domain-emoji">🔢</div>
+      <div class="domain-info">
+        <h2>חשבון</h2>
+        <p>שלב ${Math.min(PROGRESS.math.stageIndex+1, MATH_STAGES.length)} מתוך ${MATH_STAGES.length}</p>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct('math')}%"></div></div>
+      </div>
+    </button>
+    <button class="btn ghost small" style="display:block;margin:14px auto 0;" onclick="renderGenderScreen()">🔄 בן / בת</button>
+    <div style="text-align:center; margin-top:10px; color:#B5AECB; font-size:13px; font-weight:600;">נוצר על ידי מיכל כהנא</div>
+  `;
+  speak('שלום! אני חוכמה הינשופה. על מה נלמד היום? קריאה, כתיבה, או חשבון?');
+}
+
+async function openDomain(domain){
+  window.__back = goHome;
+  await ensureLoaded(domain);
+  const stages = DOMAINS[domain].stages;
+  const prog = PROGRESS[domain];
+  let html = topbar(DOMAINS[domain].label);
+  html += `<div class="stage-list">`;
+  stages.forEach((s,i)=>{
+    const done = !!prog.completed[i];
+    const current = i === prog.stageIndex && !done;
+    html += `<button class="stage-item ${done?'done':''} ${current?'current':''}" onclick="startStage('${domain}',${i})">
+      <div class="stage-num">${done?'✓':(i+1)}</div>
+      <div class="stage-title">${s.title}</div>
+      <div class="stage-check">${done?'⭐':'▶️'}</div>
+    </button>`;
+  });
+  html += `</div>
+  <div class="btn-row">
+    <button class="btn ghost" onclick="resetDomain('${domain}')">↩️ חזרה לשלב הראשון</button>
+  </div>`;
+  app.innerHTML = html;
+}
+
+async function resetDomain(domain){
+  PROGRESS[domain] = {stageIndex:0, completed:{}};
+  await saveProgress(domain, PROGRESS[domain]);
+  openDomain(domain);
+}
+
+async function markStageComplete(domain, idx){
+  const prog = PROGRESS[domain];
+  prog.completed[idx] = true;
+  if(idx === prog.stageIndex) prog.stageIndex = Math.min(idx+1, DOMAINS[domain].stages.length-1);
+  await saveProgress(domain, prog);
+}
+
+/* ============ STAGE RUNNER ============ */
+function startStage(domain, idx){
+  window.__back = ()=>openDomain(domain);
+  const stage = DOMAINS[domain].stages[idx];
+  if(domain==='reading') return teachReading(domain, idx, stage);
+  if(domain==='writing') return teachWriting(domain, idx, stage);
+  if(domain==='math') return teachMath(domain, idx, stage);
+}
+
+function progressHeader(domain, idx){
+  const total = DOMAINS[domain].stages.length;
+  const pct = Math.round(((idx+1)/total)*100);
+  const colorVar = domain==='reading'?'var(--blue)':domain==='writing'?'var(--purple)':'var(--orange)';
+  return `<div class="top-progress">
+    <span>שלב ${idx+1} מתוך ${total}</span>
+    <div class="bar"><div class="bar-fill" style="width:${pct}%;background:${colorVar}"></div></div>
+  </div>`;
+}
+
+function removeHint(){ currentHint=null; const h=document.getElementById('hintBtn'); if(h) h.remove(); }
+function showHint(text){
+  currentHint = text;
+  removeHint();
+  currentHint = text;
+  const btn = document.createElement('button');
+  btn.className='hint-btn'; btn.id='hintBtn';
+  btn.innerHTML='💡 רוצה רמז?';
+  btn.onclick=()=>speak(currentHint);
+  document.body.appendChild(btn);
+}
+
+/* ---------- READING ---------- */
+function narrateLetter(L){ return `זו האות ${L.name}. לדוגמה: ${L.word}`; }
+function narrateFinal(f){ return `זו הצורה הסופית של האות ${f.baseName}. משתמשים בה רק בסוף מילה, כמו במילה ${f.word}`; }
+async function narrateNiqudAll(){ for(const n of NIQUD){ await speak(n.name+'. '+n.explain); } }
+
+async function teachReading(domain, idx, stage){
+  if(stage.kind==='letter'){
+    const L = stage.letter;
+    const strat = STRATEGIES.letter(L);
+    app.innerHTML = `${topbar('לומדים אות')}
+      ${progressHeader(domain, idx)}
+      <div class="teach-card">
+        <div class="big-letter" style="color:var(--blue-dark)">${L.ch}</div>
+        <div class="letter-name">שם האות: ${L.name}</div>
+        <div class="example-row">
+          <div class="example-emoji">${L.emoji}</div>
+          <div class="example-word">${L.word}</div>
+        </div>
+        ${L.finalNote?`<div class="final-note">${L.finalNote}</div>`:''}
+      </div>
+      ${strategyBox(strat)}
+      <button class="btn blue" style="margin-top:18px" onclick="speak('${narrateLetter(L)}')">🔊 השמיעי שוב</button>
+      <button class="btn primary" style="margin-top:10px" onclick="startReadingPractice('${domain}',${idx})">התחלת תרגול ➡️</button>`;
+    await speak(narrateLetter(L));
+    await speak(strat);
+  } else if(stage.kind==='letterFinal'){
+    const f = stage.data;
+    const strat = STRATEGIES.letterFinal();
+    app.innerHTML = `${topbar('אות סופית')}
+      ${progressHeader(domain, idx)}
+      <div class="teach-card">
+        <div class="big-letter" style="color:var(--blue-dark)">${f.final}</div>
+        <div class="letter-name">הצורה הסופית של ${f.baseName} (${f.base})</div>
+        <div class="example-row">
+          <div class="example-emoji">${f.emoji}</div>
+          <div class="example-word">${f.word}</div>
+        </div>
+        <div class="final-note">משתמשים בצורה הזו רק כשהאות מגיעה בסוף המילה</div>
+      </div>
+      ${strategyBox(strat)}
+      <button class="btn blue" style="margin-top:18px" onclick="speak('${narrateFinal(f)}')">🔊 השמיעי שוב</button>
+      <button class="btn primary" style="margin-top:10px" onclick="startReadingPractice('${domain}',${idx})">התחלת תרגול ➡️</button>`;
+    await speak(narrateFinal(f));
+    await speak(strat);
+  } else if(stage.kind==='niqud'){
+    const strat = STRATEGIES.niqud();
+    app.innerHTML = `${topbar('לומדים ניקוד')}
+      ${progressHeader(domain, idx)}
+      <div class="teach-card">
+        <div style="font-size:18px;font-weight:700;margin-bottom:10px">סימני הניקוד עוזרים לדעת איזה צליל תנועה שומעים</div>
+        ${NIQUD.map(n=>`<div class="example-row" style="justify-content:space-between">
+          <button class="icon-btn" style="width:40px;height:40px;font-size:16px" onclick="speak('${n.name}. ${n.explain}')">🔊</button>
+          <div style="font-weight:600">${n.name}</div>
+          <div style="font-size:34px;font-weight:900">${n.ex}</div>
+        </div>`).join('')}
+      </div>
+      ${strategyBox(strat)}
+      <button class="btn blue" style="margin-top:18px" onclick="narrateNiqudAll()">🔊 השמיעי את כולם</button>
+      <button class="btn primary" style="margin-top:10px" onclick="startReadingPractice('${domain}',${idx})">התחלת תרגול ➡️</button>`;
+    await narrateNiqudAll();
+    await speak(strat);
+  } else if(stage.kind==='readword'){
+    const strat = STRATEGIES.readword();
+    app.innerHTML = `${topbar('קוראים מילה')}
+      ${progressHeader(domain, idx)}
+      <div class="teach-card">
+        <div style="font-size:18px;font-weight:700;margin-bottom:10px">${g('בואי ננסה לקרוא את המילה הזו יחד','בוא ננסה לקרוא את המילה הזו יחד')}</div>
+        <div class="word-display">${stage.word}</div>
+      </div>
+      ${strategyBox(strat)}
+      <button class="btn blue" style="margin-top:18px" onclick="speak('${stage.word}')">🔊 השמיעי איך קוראים</button>
+      <button class="btn primary" style="margin-top:10px" onclick="startReadingPractice('${domain}',${idx})">עכשיו תורי לקרוא ➡️</button>`;
+    await speak(g('בואי ננסה לקרוא ביחד את המילה: ','בוא ננסה לקרוא ביחד את המילה: ')+stage.word);
+    await speak(strat);
+  }
+}
+
+function startReadingPractice(domain, idx){
+  const stage = DOMAINS[domain].stages[idx];
+  if(stage.kind==='letter') return practiceLetterMCQ(domain, idx, stage, 0, 0);
+  if(stage.kind==='letterFinal') return practiceFinalMCQ(domain, idx, stage.data, 0, 0);
+  if(stage.kind==='niqud') return practiceNiqudMCQ(domain, idx, 0, 0);
+  if(stage.kind==='readword') return practiceReadAloud(domain, idx, stage, 0);
+}
+
+function practiceLetterMCQ(domain, idx, stage, round, correctCount, question){
+  const total = 3;
+  if(round>=total){ return finishStagePractice(domain, idx); }
+  const L = stage.letter;
+  if(!question){
+    const others = LETTERS.filter(l=>l.ch!==L.ch);
+    const opts = shuffle([L, ...shuffle(others).slice(0,3)]).map(o=>({ch:o.ch, word:o.word}));
+    const correctIdx = opts.findIndex(o=>o.ch===L.ch);
+    question = {opts, correctIdx, tried:[], attempts:0};
+  }
+  const {opts, correctIdx, tried, attempts} = question;
+  app.innerHTML = `${topbar('תרגול')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div style="font-size:17px;font-weight:700">איפה האות ששומעים?</div>
+      <button class="btn blue" style="margin-top:12px" onclick="speak('${L.name}')">🔊 השמיעי את הצליל</button>
+    </div>
+    <div class="options-grid" id="opts">
+      ${opts.map((o,i)=>{
+        const disabled = tried.includes(i);
+        return `<button class="option-btn ${disabled?'wrong':''}" data-i="${i}" ${disabled?'disabled':''} onclick="answerLetter(${i},${correctIdx},'${domain}',${idx},${enc(stage)},${round},${correctCount},${enc(question)})">${o.ch}<span class="lbl">${o.word}</span></button>`;
+      }).join('')}
+    </div>
+    <div class="feedback-banner" id="fb"></div>`;
+  showHint(g('תקשיבי שוב לצליל, ונסי למצוא את האות שנשמעת ככה: ','תקשיב שוב לצליל, ונסה למצוא את האות שנשמעת ככה: ')+L.name);
+  if(attempts===0) speak('איפה האות ' + L.name + '?');
+}
+function answerLetter(i, correctIdx, domain, idx, stage, round, correctCount, question){
+  const btns = document.querySelectorAll('#opts .option-btn');
+  const fb = document.getElementById('fb');
+  removeHint();
+  if(i===correctIdx){
+    btns.forEach(b=>b.disabled=true);
+    btns[i].classList.add('correct');
+    fb.className='feedback-banner show good'; fb.innerText=correctPhrase();
+    speak(correctPhrase());
+    setTimeout(()=>practiceLetterMCQ(domain, idx, stage, round+1, correctCount+1), 1300);
+  }else{
+    question.tried.push(i); question.attempts++;
+    btns[i].classList.add('wrong'); btns[i].disabled=true;
+    if(question.attempts>=3){
+      btns.forEach(b=>b.disabled=true);
+      const cb = document.querySelector(`#opts .option-btn[data-i="${correctIdx}"]`);
+      if(cb) cb.classList.add('correct');
+      const L = stage.letter;
+      const explain = g(`זו הייתה האות ${L.name}. בואי נזכור אותה יחד עם המילה ${L.word}. בפעם הבאה תקשיבי לצליל בהתחלה ותנסי להתאים אותו לצורת האות.`, `זו הייתה האות ${L.name}. בוא נזכור אותה יחד עם המילה ${L.word}. בפעם הבאה תקשיב לצליל בהתחלה ותנסה להתאים אותו לצורת האות.`);
+      fb.className='feedback-banner show bad'; fb.innerText=explain;
+      speak(explain);
+      setTimeout(()=>practiceLetterMCQ(domain, idx, stage, round+1, correctCount), 2200);
+    }else{
+      fb.className='feedback-banner show bad'; fb.innerText=wrongPhrase()+` (נשארו ${3-question.attempts} ניסיונות)`;
+      speak(wrongPhrase());
+      setTimeout(()=>practiceLetterMCQ(domain, idx, stage, round, correctCount, question), 1300);
+    }
+  }
+}
+
+function practiceFinalMCQ(domain, idx, data, round, correctCount, question){
+  const total = 3;
+  if(round>=total) return finishStagePractice(domain, idx);
+  if(!question){
+    const others = FINALS.filter(f=>f.final!==data.final);
+    const opts = shuffle([data, ...shuffle(others).slice(0,3)]).map(o=>({final:o.final}));
+    const correctIdx = opts.findIndex(o=>o.final===data.final);
+    question = {opts, correctIdx, tried:[], attempts:0};
+  }
+  const {opts, correctIdx, tried, attempts} = question;
+  app.innerHTML = `${topbar('תרגול')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div style="font-size:17px;font-weight:700">באיזו אות מסתיימת המילה?</div>
+      <div class="word-display">${data.word}</div>
+      <button class="btn blue" style="margin-top:6px" onclick="speak('${data.word}')">🔊 השמיעי את המילה</button>
+    </div>
+    <div class="options-grid" id="opts">
+      ${opts.map((o,i)=>{
+        const disabled = tried.includes(i);
+        return `<button class="option-btn ${disabled?'wrong':''}" data-i="${i}" ${disabled?'disabled':''} onclick="answerFinal(${i},${correctIdx},'${domain}',${idx},${enc(data)},${round},${correctCount},${enc(question)})">${o.final}</button>`;
+      }).join('')}
+    </div>
+    <div class="feedback-banner" id="fb"></div>`;
+  showHint(g('שימי לב, זו הצורה הסופית של ','שים לב, זו הצורה הסופית של ')+data.baseName);
+  if(attempts===0) speak('באיזו אות מסתיימת המילה '+data.word+'?');
+}
+function answerFinal(i, correctIdx, domain, idx, data, round, correctCount, question){
+  const btns = document.querySelectorAll('#opts .option-btn');
+  const fb = document.getElementById('fb');
+  removeHint();
+  if(i===correctIdx){
+    btns.forEach(b=>b.disabled=true);
+    btns[i].classList.add('correct');
+    fb.className='feedback-banner show good'; fb.innerText=correctPhrase();
+    speak(correctPhrase());
+    setTimeout(()=>practiceFinalMCQ(domain, idx, data, round+1, correctCount+1), 1300);
+  }else{
+    question.tried.push(i); question.attempts++;
+    btns[i].classList.add('wrong'); btns[i].disabled=true;
+    if(question.attempts>=3){
+      btns.forEach(b=>b.disabled=true);
+      const cb = document.querySelector(`#opts .option-btn[data-i="${correctIdx}"]`);
+      if(cb) cb.classList.add('correct');
+      const explain = g(`זכרי: הצורה הסופית של ${data.baseName} היא ${data.final}, ומשתמשים בה רק בסוף מילה כמו ${data.word}`, `זכור: הצורה הסופית של ${data.baseName} היא ${data.final}, ומשתמשים בה רק בסוף מילה כמו ${data.word}`);
+      fb.className='feedback-banner show bad'; fb.innerText=explain;
+      speak(explain);
+      setTimeout(()=>practiceFinalMCQ(domain, idx, data, round+1, correctCount), 2200);
+    }else{
+      fb.className='feedback-banner show bad'; fb.innerText=wrongPhrase()+` (נשארו ${3-question.attempts} ניסיונות)`;
+      speak(wrongPhrase());
+      setTimeout(()=>practiceFinalMCQ(domain, idx, data, round, correctCount, question), 1300);
+    }
+  }
+}
+
+function practiceNiqudMCQ(domain, idx, round, correctCount, question){
+  const total = 4;
+  if(round>=total) return finishStagePractice(domain, idx);
+  if(!question){
+    const target = NIQUD[Math.floor(Math.random()*NIQUD.length)];
+    const others = NIQUD.filter(n=>n.sign!==target.sign);
+    const opts = shuffle([target, ...shuffle(others).slice(0,3)]).map(o=>({sign:o.sign,name:o.name,ex:o.ex}));
+    const correctIdx = opts.findIndex(o=>o.sign===target.sign);
+    question = {opts, correctIdx, tried:[], attempts:0, target};
+  }
+  const {opts, correctIdx, tried, attempts, target} = question;
+  app.innerHTML = `${topbar('תרגול ניקוד')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div style="font-size:17px;font-weight:700">איזה סימן ניקוד נותן את הצליל הזה?</div>
+      <button class="btn blue" style="margin-top:12px" onclick="speak('${target.name}. ${target.explain}')">🔊 השמיעי שוב</button>
+    </div>
+    <div class="options-grid" id="opts">
+      ${opts.map((o,i)=>{
+        const disabled = tried.includes(i);
+        return `<button class="option-btn ${disabled?'wrong':''}" data-i="${i}" ${disabled?'disabled':''} onclick="answerNiqud(${i},${correctIdx},'${domain}',${idx},${round},${correctCount},${enc(question)})">${o.ex}<span class="lbl">${o.name}</span></button>`;
+      }).join('')}
+    </div>
+    <div class="feedback-banner" id="fb"></div>`;
+  showHint(g('תקשיבי איך נשמע הסימן: ','תקשיב איך נשמע הסימן: ')+target.name);
+  if(attempts===0) speak('איפה הניקוד של ' + target.name + '?');
+}
+function answerNiqud(i, correctIdx, domain, idx, round, correctCount, question){
+  const btns = document.querySelectorAll('#opts .option-btn');
+  const fb = document.getElementById('fb');
+  removeHint();
+  if(i===correctIdx){
+    btns.forEach(b=>b.disabled=true);
+    btns[i].classList.add('correct');
+    fb.className='feedback-banner show good'; fb.innerText=correctPhrase();
+    speak(correctPhrase());
+    setTimeout(()=>practiceNiqudMCQ(domain, idx, round+1, correctCount+1), 1300);
+  }else{
+    question.tried.push(i); question.attempts++;
+    btns[i].classList.add('wrong'); btns[i].disabled=true;
+    if(question.attempts>=3){
+      btns.forEach(b=>b.disabled=true);
+      const cb = document.querySelector(`#opts .option-btn[data-i="${correctIdx}"]`);
+      if(cb) cb.classList.add('correct');
+      const explain = `זה היה הסימן ${question.target.name}. ${question.target.explain}`;
+      fb.className='feedback-banner show bad'; fb.innerText=explain;
+      speak(explain);
+      setTimeout(()=>practiceNiqudMCQ(domain, idx, round+1, correctCount), 2600);
+    }else{
+      fb.className='feedback-banner show bad'; fb.innerText=wrongPhrase()+` (נשארו ${3-question.attempts} ניסיונות)`;
+      speak(wrongPhrase());
+      setTimeout(()=>practiceNiqudMCQ(domain, idx, round, correctCount, question), 1300);
+    }
+  }
+}
+
+function practiceReadAloud(domain, idx, stage, attempts){
+  attempts = attempts||0;
+  app.innerHTML = `${topbar('הקראה')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div style="font-size:17px;font-weight:700">לחצי על המיקרופון ותקראי את המילה בקול</div>
+      <div class="word-display">${stage.word}</div>
+      <div class="mic-circle" id="mic" onclick="recordWord('${stage.word}','${domain}',${idx},${attempts})">🎤</div>
+      <div class="heard-text" id="heard">${attempts>0? `ניסיון ${attempts+1} מתוך 3`:''}</div>
+    </div>
+    <div class="feedback-banner" id="fb"></div>
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn ghost" onclick="finishStagePractice('${domain}',${idx})">דילוג ✔️</button>
+    </div>`;
+  showHint(g('נסי להגיד כל הברה בנפרד, לאט לאט: ','נסה להגיד כל הברה בנפרד, לאט לאט: ')+stage.word);
+}
+async function recordWord(target, domain, idx, attempts){
+  attempts = attempts||0;
+  const mic = document.getElementById('mic');
+  const heard = document.getElementById('heard');
+  const fb = document.getElementById('fb');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    fb.className='feedback-banner show bad';
+    fb.innerText='זיהוי הקול אינו נתמך בדפדפן הזה. אפשר להמשיך הלאה';
+    speak('אין לי אפשרות לשמוע אותך בדפדפן הזה, אבל את יכולה להמשיך הלאה');
+    return;
+  }
+  mic.classList.add('listening');
+  heard.innerText = 'מקשיבה...';
+  fb.className='feedback-banner';
+  try{
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      stream.getTracks().forEach(t=>t.stop());
+    }
+  }catch(permErr){
+    mic.classList.remove('listening');
+    fb.className='feedback-banner show bad';
+    fb.innerText=g('צריך לאשר גישה למיקרופון בדפדפן כדי שאוכל לשמוע אותך. בדקי את הרשאות הדפדפן ונסי שוב','צריך לאשר גישה למיקרופון בדפדפן כדי שאוכל לשמוע אותך. בדוק את הרשאות הדפדפן ונסה שוב');
+    speak('צריך לאשר גישה למיקרופון כדי שאוכל לשמוע אותך');
+    return;
+  }
+  let rec;
+  try{ rec = new SR(); }catch(e){
+    mic.classList.remove('listening');
+    fb.className='feedback-banner show bad'; fb.innerText='לא הצלחתי להפעיל את זיהוי הקול';
+    return;
+  }
+  rec.lang='he-IL'; rec.interimResults=false; rec.maxAlternatives=3;
+  rec.onresult = (e)=>{
+    mic.classList.remove('listening');
+    const said = e.results[0][0].transcript.trim();
+    heard.innerText = 'שמעתי: '+said;
+    const norm = s=>s.replace(/[\u0591-\u05C7]/g,'').replace(/[^\u05D0-\u05EA]/g,'').trim();
+    if(norm(said).includes(norm(target)) || norm(target).includes(norm(said))){
+      fb.className='feedback-banner show good'; fb.innerText=correctPhrase()+' קראת נכון!';
+      speak(correctPhrase()+' קראת את המילה נכון');
+      setTimeout(()=>finishStagePractice(domain, idx), 1600);
+    }else{
+      const newAttempts = attempts+1;
+      if(newAttempts>=3){
+        const syll = target.replace(/[\u0591-\u05C7]/g,'').split('').join('-');
+        const explain = g(`בואי ננסה יחד לאט: ${target}. אפשר לחלק את המילה לצלילים: ${syll}. כל הכבוד על הניסיון!`, `בוא ננסה יחד לאט: ${target}. אפשר לחלק את המילה לצלילים: ${syll}. כל הכבוד על הניסיון!`);
+        fb.className='feedback-banner show bad'; fb.innerText=explain;
+        speak(explain);
+        setTimeout(()=>finishStagePractice(domain, idx), 2800);
+      }else{
+        fb.className='feedback-banner show bad'; fb.innerText=g(`בואי ננסה שוב (נשארו ${3-newAttempts} ניסיונות). תקשיבי: ${target}`, `בוא ננסה שוב (נשארו ${3-newAttempts} ניסיונות). תקשיב: ${target}`);
+        speak(g('בואי ננסה שוב. תקשיבי: ','בוא ננסה שוב. תקשיב: ')+target);
+        setTimeout(()=>practiceReadAloud(domain, idx, {word:target}, newAttempts), 1600);
+      }
+    }
+  };
+  rec.onerror = (e)=>{
+    mic.classList.remove('listening');
+    let msg = 'הייתה בעיה בזיהוי הקול, אפשר ללחוץ שוב על המיקרופון';
+    if(e.error==='not-allowed' || e.error==='service-not-allowed') msg='צריך לאשר גישה למיקרופון בדפדפן כדי שאוכל לשמוע אותך';
+    else if(e.error==='no-speech') msg=g('לא שמעתי כלום, נסי לדבר קצת יותר חזק וקרוב למסך','לא שמעתי כלום, נסה לדבר קצת יותר חזק וקרוב למסך');
+    else if(e.error==='network') msg='יש כרגע בעיית רשת בזיהוי הקול, אפשר לנסות שוב או לדלג';
+    heard.innerText='';
+    fb.className='feedback-banner show bad'; fb.innerText=msg;
+    speak(msg);
+  };
+  rec.onend = ()=> mic.classList.remove('listening');
+  try{ rec.start(); }catch(startErr){
+    mic.classList.remove('listening');
+    fb.className='feedback-banner show bad'; fb.innerText=g('לא הצלחתי להתחיל להקליט, נסי ללחוץ שוב','לא הצלחתי להתחיל להקליט, נסה ללחוץ שוב');
+  }
+}
+
+/* ---------- WRITING ---------- */
+async function teachWriting(domain, idx, stage){
+  if(stage.kind==='traceWord'){
+    const word = stage.word;
+    const strat = STRATEGIES.traceWord();
+    app.innerHTML = `${topbar('כותבים מילה')}
+      ${progressHeader(domain, idx)}
+      <div class="teach-card">
+        <div style="font-size:16px;font-weight:700">${g('בואי נכתוב את המילה יחד','בוא נכתוב את המילה יחד')}</div>
+        <div class="word-display" style="margin-top:10px">${word}</div>
+      </div>
+      ${strategyBox(strat)}
+      <button class="btn blue" style="margin-top:18px" onclick="speak('${word}')">🔊 השמיעי שוב</button>
+      <button class="btn primary" style="margin-top:10px" onclick="startWordTracePractice('${domain}',${idx},0)">התחלת תרגול כתיבה ✏️</button>`;
+    await speak(g('בואי נכתוב יחד את המילה ','בוא נכתוב יחד את המילה ')+word);
+    await speak(strat);
+    return;
+  }
+  const L = stage.letter;
+  const strat = STRATEGIES.trace();
+  app.innerHTML = `${topbar('לומדים לכתוב')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div class="big-letter" style="color:var(--purple-dark)">${L.ch}</div>
+      <div class="letter-name">${L.name}</div>
+      ${L.isFinal?`<div class="final-note">זו הצורה הסופית - כותבים אותה רק בסוף מילה, כמו במילה ${L.word} ${L.emoji}</div>`:''}
+      <div style="margin-top:10px;font-size:15px;color:#8A83A0">כותבים מימין לשמאל, בקו רציף ורגוע</div>
+    </div>
+    ${strategyBox(strat)}
+    <button class="btn blue" style="margin-top:18px" onclick="speak('${g('בואי נלמד לכתוב את האות','בוא נלמד לכתוב את האות')} ${L.name}. כותבים מימין לשמאל, בקו רגוע')">🔊 השמיעי שוב</button>
+    <button class="btn primary" style="margin-top:10px" onclick="startWritingPractice('${domain}',${idx},0)">התחלת תרגול כתיבה ✏️</button>`;
+  await speak(g('בואי נלמד לכתוב את האות ','בוא נלמד לכתוב את האות ')+L.name+'. כותבים מימין לשמאל, בקו רגוע ויפה');
+  await speak(strat);
+}
+function startWritingPractice(domain, idx, attempts){
+  attempts = attempts||0;
+  const stage = DOMAINS[domain].stages[idx];
+  const L = stage.letter;
+  app.innerHTML = `${topbar('תרגול כתיבה')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px">ציירי עם האצבע מעל האות הדהויה</div>
+      <canvas id="tc" class="trace-canvas" width="320" height="320"></canvas>
+      ${attempts>0?`<div style="color:#8A83A0;font-size:14px">ניסיון ${attempts+1} מתוך 3</div>`:''}
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" onclick="clearCanvas()">🧹 נקה</button>
+      <button class="btn primary" onclick="checkTrace('${domain}',${idx},${attempts})">סיימתי! ✅</button>
+    </div>
+    <div class="feedback-banner" id="fb"></div>`;
+  setupCanvas(L.ch);
+  showHint(g('התחילי מלמעלה וזוזי לאט, אפשר להסתכל על האות הדהויה כמדריך','התחל מלמעלה וזוז לאט, אפשר להסתכל על האות הדהויה כמדריך'));
+}
+let canvasCtx=null, drawing=false, currentTraceLetter='';
+function setupCanvas(letter){
+  currentTraceLetter = letter;
+  const c = document.getElementById('tc');
+  canvasCtx = c.getContext('2d');
+  canvasCtx.clearRect(0,0,c.width,c.height);
+  canvasCtx.font='290px Rubik'; canvasCtx.textAlign='center'; canvasCtx.textBaseline='middle';
+  canvasCtx.fillStyle='rgba(155,107,217,0.18)';
+  canvasCtx.fillText(letter, c.width/2, c.height/2+18);
+  canvasCtx.strokeStyle='#3A3352'; canvasCtx.lineWidth=10; canvasCtx.lineCap='round'; canvasCtx.lineJoin='round';
+  const pos = e=>{
+    const r=c.getBoundingClientRect();
+    const t = e.touches? e.touches[0]:e;
+    return {x:t.clientX-r.left, y:t.clientY-r.top};
+  };
+  const start=e=>{drawing=true; const p=pos(e); canvasCtx.beginPath(); canvasCtx.moveTo(p.x,p.y); e.preventDefault();};
+  const move=e=>{if(!drawing)return; const p=pos(e); canvasCtx.lineTo(p.x,p.y); canvasCtx.stroke(); e.preventDefault();};
+  const end=()=>drawing=false;
+  c.onmousedown=start; c.onmousemove=move; c.onmouseup=end; c.onmouseleave=end;
+  c.ontouchstart=start; c.ontouchmove=move; c.ontouchend=end;
+}
+function clearCanvas(){ setupCanvas(currentTraceLetter); }
+function checkTrace(domain, idx, attempts){
+  attempts = attempts||0;
+  const c = document.getElementById('tc');
+  const img = canvasCtx.getImageData(0,0,c.width,c.height).data;
+  let inkPixels=0;
+  for(let i=0;i<img.length;i+=4){ if(img[i+3]>0 && (img[i]<100)) inkPixels++; }
+  const ratio = inkPixels / (c.width*c.height);
+  const fb = document.getElementById('fb');
+  if(ratio>0.01){
+    fb.className='feedback-banner show good'; fb.innerText=correctPhrase();
+    speak(correctPhrase()+' כתבת יפה מאוד');
+    setTimeout(()=>finishStagePractice(domain, idx), 1300);
+  }else{
+    const newAttempts = attempts+1;
+    if(newAttempts>=3){
+      const explain = g('בואי נעשה את זה יחד: התחילי בנקודה העליונה של האות, וזוזי לאט על הקו הדהוי עד הסוף. כל הכבוד על ההשתדלות!', 'בוא נעשה את זה יחד: התחל בנקודה העליונה של האות, וזוז לאט על הקו הדהוי עד הסוף. כל הכבוד על ההשתדלות!');
+      fb.className='feedback-banner show bad'; fb.innerText=explain;
+      speak(explain);
+      setTimeout(()=>finishStagePractice(domain, idx), 2600);
+    }else{
+      fb.className='feedback-banner show bad'; fb.innerText=g(`נראה שעדיין לא ציירת. נסי לצייר מעל האות עם האצבע (נשארו ${3-newAttempts} ניסיונות)`, `נראה שעדיין לא ציירת. נסה לצייר מעל האות עם האצבע (נשארו ${3-newAttempts} ניסיונות)`);
+      speak(g('נסי לצייר מעל האות עם האצבע','נסה לצייר מעל האות עם האצבע'));
+      setTimeout(()=>startWritingPractice(domain, idx, newAttempts), 1200);
+    }
+  }
+}
+
+let wordCanvasWord = '';
+function startWordTracePractice(domain, idx, attempts){
+  attempts = attempts||0;
+  const stage = DOMAINS[domain].stages[idx];
+  const word = stage.word;
+  app.innerHTML = `${topbar('תרגול כתיבה')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px">ציירי עם האצבע מעל המילה הדהויה</div>
+      <canvas id="tc" class="trace-canvas" width="420" height="220"></canvas>
+      ${attempts>0?`<div style="color:#8A83A0;font-size:14px">ניסיון ${attempts+1} מתוך 3</div>`:''}
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" onclick="clearWordCanvas()">🧹 נקה</button>
+      <button class="btn primary" onclick="checkWordTrace('${domain}',${idx},${attempts})">סיימתי! ✅</button>
+    </div>
+    <div class="feedback-banner" id="fb"></div>`;
+  setupWordCanvas(word);
+  showHint(g('כתבי אות אחר אות מימין לשמאל, לאט ובנחת','כתוב אות אחר אות מימין לשמאל, לאט ובנחת'));
+}
+function setupWordCanvas(word){
+  wordCanvasWord = word;
+  const c = document.getElementById('tc');
+  canvasCtx = c.getContext('2d');
+  canvasCtx.clearRect(0,0,c.width,c.height);
+  const fontSize = Math.max(46, Math.min(92, 380/word.length));
+  canvasCtx.font=fontSize+'px Rubik'; canvasCtx.textAlign='center'; canvasCtx.textBaseline='middle';
+  try{ canvasCtx.direction='rtl'; canvasCtx.letterSpacing = Math.round(fontSize*0.22)+'px'; }catch(e){}
+  canvasCtx.fillStyle='rgba(155,107,217,0.18)';
+  canvasCtx.fillText(word, c.width/2, c.height/2+10);
+  canvasCtx.strokeStyle='#3A3352'; canvasCtx.lineWidth=8; canvasCtx.lineCap='round'; canvasCtx.lineJoin='round';
+  const pos = e=>{ const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left, y:t.clientY-r.top}; };
+  const start=e=>{drawing=true; const p=pos(e); canvasCtx.beginPath(); canvasCtx.moveTo(p.x,p.y); e.preventDefault();};
+  const move=e=>{if(!drawing)return; const p=pos(e); canvasCtx.lineTo(p.x,p.y); canvasCtx.stroke(); e.preventDefault();};
+  const end=()=>drawing=false;
+  c.onmousedown=start; c.onmousemove=move; c.onmouseup=end; c.onmouseleave=end;
+  c.ontouchstart=start; c.ontouchmove=move; c.ontouchend=end;
+}
+function clearWordCanvas(){ setupWordCanvas(wordCanvasWord); }
+function checkWordTrace(domain, idx, attempts){
+  attempts = attempts||0;
+  const c = document.getElementById('tc');
+  const img = canvasCtx.getImageData(0,0,c.width,c.height).data;
+  let inkPixels=0;
+  for(let i=0;i<img.length;i+=4){ if(img[i+3]>0 && (img[i]<100)) inkPixels++; }
+  const ratio = inkPixels / (c.width*c.height);
+  const fb = document.getElementById('fb');
+  if(ratio>0.008){
+    fb.className='feedback-banner show good'; fb.innerText=correctPhrase();
+    speak(correctPhrase()+' כתבת את המילה יפה מאוד');
+    setTimeout(()=>finishStagePractice(domain, idx), 1300);
+  }else{
+    const newAttempts = attempts+1;
+    if(newAttempts>=3){
+      const explain=g('בואי נעשה זאת יחד: כתבי כל אות במילה בנפרד, מימין לשמאל, על גבי הקו הדהוי. כל הכבוד על ההשתדלות!', 'בוא נעשה זאת יחד: כתוב כל אות במילה בנפרד, מימין לשמאל, על גבי הקו הדהוי. כל הכבוד על ההשתדלות!');
+      fb.className='feedback-banner show bad'; fb.innerText=explain;
+      speak(explain);
+      setTimeout(()=>finishStagePractice(domain, idx), 2600);
+    }else{
+      fb.className='feedback-banner show bad'; fb.innerText=g(`נסי לצייר מעל המילה עם האצבע (נשארו ${3-newAttempts} ניסיונות)`, `נסה לצייר מעל המילה עם האצבע (נשארו ${3-newAttempts} ניסיונות)`);
+      speak(g('נסי לצייר מעל המילה עם האצבע','נסה לצייר מעל המילה עם האצבע'));
+      setTimeout(()=>startWordTracePractice(domain, idx, newAttempts), 1200);
+    }
+  }
+}
+
+/* ---------- MATH ---------- */
+async function teachMath(domain, idx, stage){
+  let bodyHtml='', narration='', strat='';
+  if(stage.kind==='count'){
+    const [a,b]=stage.range;
+    const emojis = ['🍎','⭐','🐝','🎈','🍓'];
+    const em = pick(emojis);
+    const n = b;
+    bodyHtml = `<div style="font-size:17px;font-weight:700;margin-bottom:10px">נספור ביחד עד ${n}</div>
+      <div class="dots-grid">${Array.from({length:n}).map(()=>`<span>${em}</span>`).join('')}</div>`;
+    narration = g('בואי נספור ביחד עד ','בוא נספור ביחד עד ')+n+'. אחת, שתיים, שלוש...';
+    strat = STRATEGIES.count();
+  } else if(stage.kind==='subitize'){
+    bodyHtml = `<div style="font-size:17px;font-weight:700">נלמד להסתכל על קבוצה ולדעת מיד כמה יש, בלי לספור אחד אחד</div>
+      <div class="dots-grid">${Array.from({length:3}).map(()=>`<span>🔵</span>`).join('')}</div>
+      <div style="margin-top:8px;color:#8A83A0">לדוגמה, כאן יש 3 בלי לספור</div>`;
+    narration = 'נלמד להביט בקבוצה ולדעת מיד כמה יש בה, בלי לספור אחד אחד';
+    strat = STRATEGIES.subitize();
+  } else if(stage.kind==='compare'){
+    bodyHtml = `<div style="font-size:17px;font-weight:700">נלמד להשוות בין שני מספרים: גדול מ (&gt;), קטן מ (&lt;), או שווה (=)</div>
+      <div style="margin-top:14px;font-size:30px;font-weight:900">7 &gt; 4</div>
+      <div style="margin-top:8px;font-size:30px;font-weight:900">3 &lt; 8</div>
+      <div style="margin-top:8px;font-size:30px;font-weight:900">5 = 5</div>`;
+    narration = 'נלמד להשוות בין מספרים: גדול מ, קטן מ, או שווה';
+    strat = STRATEGIES.compare();
+  } else if(stage.kind==='add'){
+    bodyHtml = `<div style="font-size:17px;font-weight:700">נלמד לחבר מספרים ביחד</div>
+      <div style="font-size:40px;font-weight:900;margin-top:14px">2 + 3 = 5</div>
+      <div style="margin-top:8px;color:#8A83A0">כשמחברים, סופרים הכל ביחד</div>`;
+    narration = 'נלמד לחבר מספרים. כשמחברים, סופרים הכל ביחד';
+    strat = STRATEGIES.add();
+  } else if(stage.kind==='subtract'){
+    bodyHtml = `<div style="font-size:17px;font-weight:700">נלמד לחסר מספרים</div>
+      <div style="font-size:40px;font-weight:900;margin-top:14px">5 - 2 = 3</div>
+      <div style="margin-top:8px;color:#8A83A0">כשמחסרים, לוקחים כמות ומורידים ממנה</div>`;
+    narration = 'נלמד לחסר מספרים. כשמחסרים, לוקחים כמות ומורידים ממנה';
+    strat = STRATEGIES.subtract();
+  } else if(stage.kind==='numbers100'){
+    bodyHtml = `<div style="font-size:17px;font-weight:700">נלמד להכיר מספרים עד 100</div>
+      <div style="margin-top:12px;font-size:26px">🔟🔟🔟 🍎🍎🍎🍎</div>
+      <div style="margin-top:8px;color:#8A83A0">זה 3 עשרות ועוד 4 יחידות, כלומר המספר 34</div>`;
+    narration = 'נלמד להכיר מספרים עד 100, לפי עשרות ויחידות';
+    strat = STRATEGIES.numbers100();
+  }
+  app.innerHTML = `${topbar('לומדים חשבון')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">${bodyHtml}</div>
+    ${strategyBox(strat)}
+    <button class="btn blue" style="margin-top:18px" onclick="speak('${narration}')">🔊 השמיעי שוב</button>
+    <button class="btn primary" style="margin-top:10px" onclick="startMathPractice('${domain}',${idx})">התחלת תרגול ➡️</button>`;
+  await speak(narration);
+  await speak(strat);
+}
+function startMathPractice(domain, idx){
+  const stage = DOMAINS[domain].stages[idx];
+  practiceMathRound(domain, idx, stage, 0, 0);
+}
+function generateMathQuestion(stage){
+  let display, correctAns, opts, hint, prompt, explain;
+  if(stage.kind==='count'){
+    const n = Math.floor(Math.random()*(stage.range[1]-stage.range[0]+1))+stage.range[0];
+    const em = pick(['🍎','⭐','🐝','🎈','🍓']);
+    display = `<div class="dots-grid">${Array.from({length:n}).map(()=>`<span>${em}</span>`).join('')}</div><div style="margin-top:10px">כמה יש כאן?</div>`;
+    correctAns = n; opts = shuffle(uniqueNums(n,1,stage.range[1]+2,4));
+    hint = g('נסי לספור עם האצבע, אחת אחת: ','נסה לספור עם האצבע, אחת אחת: ')+em;
+    prompt = 'כמה יש כאן?';
+    explain = `יש כאן ${n}. `+g('בואי נספור יחד לאט: ','בוא נספור יחד לאט: ')+Array.from({length:n},(_,i)=>i+1).join('-');
+  } else if(stage.kind==='subitize'){
+    const n = Math.floor(Math.random()*4)+2;
+    display = `<div class="dots-grid">${Array.from({length:n}).map(()=>`<span>🔵</span>`).join('')}</div><div style="margin-top:10px">כמה עיגולים יש? תסתכלי מהר בלי לספור</div>`;
+    correctAns = n; opts = shuffle(uniqueNums(n,1,7,4));
+    hint = g('נסי להסתכל על כל הקבוצה בבת אחת','נסה להסתכל על כל הקבוצה בבת אחת');
+    prompt = 'כמה יש כאן, בלי לספור?';
+    explain = g(`יש כאן ${n}. בפעם הבאה תנסי לזהות את הכמות במבט אחד, בלי לספור אחד אחד`, `יש כאן ${n}. בפעם הבאה תנסה לזהות את הכמות במבט אחד, בלי לספור אחד אחד`);
+  } else if(stage.kind==='compare'){
+    let a = Math.floor(Math.random()*10)+1, b = Math.floor(Math.random()*10)+1;
+    if(Math.random()<0.25) b=a;
+    display = `<div style="font-size:38px;font-weight:900">${a} ? ${b}</div><div style="margin-top:10px">איזה סימן מתאים: גדול מ (&gt;), קטן מ (&lt;), או שווה (=)?</div>`;
+    const symbol = a>b?'>':(a<b?'<':'=');
+    opts = shuffle(['>','<','=']);
+    correctAns = symbol;
+    hint = 'המספר שסופרים אליו רחוק יותר הוא הגדול. אם הם זהים - הם שווים';
+    prompt = `מה הסימן הנכון בין ${a} ל ${b}?`;
+    explain = symbol==='='? `${a} = ${b}, הם שווים כי זה אותו מספר` : `${a} ${symbol} ${b}. ${symbol==='>'?a:b} גדול יותר מ-${symbol==='>'?b:a}`;
+  } else if(stage.kind==='add'){
+    const max = stage.range[1];
+    let a = Math.floor(Math.random()*(max-1))+1, b = Math.floor(Math.random()*(max-a))+1;
+    if(a+b>max){b=Math.max(1,max-a);}
+    display = `<div style="font-size:38px;font-weight:900">${a} + ${b} = ?</div>`;
+    correctAns = a+b; opts = shuffle(uniqueNums(a+b,1,max+2,4));
+    hint = g('נסי לספור עם האצבעות: קודם ','נסה לספור עם האצבעות: קודם ')+a+', ואז עוד '+b+' באצבעות';
+    prompt = 'כמה זה?';
+    explain = `${a} + ${b} = ${a+b}. `+g('בואי נספור יחד: קודם ','בוא נספור יחד: קודם ')+`${a}, ואז עוד ${b} אצבעות`;
+  } else if(stage.kind==='subtract'){
+    const max = stage.range[1];
+    let a = Math.floor(Math.random()*max)+1;
+    let b = Math.floor(Math.random()*(a+1));
+    if(b>a) b=a;
+    display = `<div style="font-size:38px;font-weight:900">${a} - ${b} = ?</div>`;
+    correctAns = a-b; opts = shuffle(uniqueNums(a-b,0,max,4));
+    hint = g('נסי לספור עם האצבעות: התחילי מ-','נסה לספור עם האצבעות: התחל מ-')+a+g(' והורידי ',' והורד ')+b;
+    prompt = 'כמה זה?';
+    explain = `${a} - ${b} = ${a-b}. `+g('בואי נספור יחד: מ-','בוא נספור יחד: מ-')+`${a} מורידים ${b}`;
+  } else if(stage.kind==='numbers100'){
+    const n = Math.floor(Math.random()*91)+10;
+    const tens = Math.floor(n/10), units = n%10;
+    display = `<div style="font-size:26px">${'🔟'.repeat(tens)} ${'🍎'.repeat(units)}</div><div style="margin-top:10px">איזה מספר זה?</div>`;
+    correctAns = n; opts = shuffle(uniqueNums(n,10,100,4));
+    hint = g(`חשבי: ${tens} עשרות ועוד ${units} יחידות`, `חשוב: ${tens} עשרות ועוד ${units} יחידות`);
+    prompt = 'איזה מספר זה?';
+    explain = `זה המספר ${n}: ${tens} עשרות ועוד ${units} יחידות`;
+  }
+  const correctIdx = opts.indexOf(correctAns);
+  return {display, opts, correctIdx, tried:[], attempts:0, hint, prompt, explain};
+}
+function practiceMathRound(domain, idx, stage, round, correctCount, question){
+  const total = 4;
+  if(round>=total) return finishStagePractice(domain, idx);
+  if(!question) question = generateMathQuestion(stage);
+  const {display, opts, correctIdx, tried, attempts} = question;
+  app.innerHTML = `${topbar('תרגול חשבון')}
+    ${progressHeader(domain, idx)}
+    <div class="teach-card">${display}</div>
+    <div class="options-grid" id="opts">
+      ${opts.map((o,i)=>{
+        const disabled = tried.includes(i);
+        return `<button class="option-btn ${disabled?'wrong':''}" data-i="${i}" ${disabled?'disabled':''} onclick="answerMath(${i},${correctIdx},'${domain}',${idx},${enc(stage)},${round},${correctCount},${enc(question)})">${o}</button>`;
+      }).join('')}
+    </div>
+    <div class="feedback-banner" id="fb"></div>`;
+  showHint(question.hint);
+  if(attempts===0) speak(question.prompt||'כמה זה?');
+}
+function answerMath(i, correctIdx, domain, idx, stage, round, correctCount, question){
+  const btns = document.querySelectorAll('#opts .option-btn');
+  const fb = document.getElementById('fb');
+  removeHint();
+  if(i===correctIdx){
+    btns.forEach(b=>b.disabled=true);
+    btns[i].classList.add('correct');
+    fb.className='feedback-banner show good'; fb.innerText=correctPhrase();
+    speak(correctPhrase());
+    setTimeout(()=>practiceMathRound(domain, idx, stage, round+1, correctCount+1), 1300);
+  }else{
+    question.tried.push(i); question.attempts++;
+    btns[i].classList.add('wrong'); btns[i].disabled=true;
+    if(question.attempts>=3){
+      btns.forEach(b=>b.disabled=true);
+      const cb = document.querySelector(`#opts .option-btn[data-i="${correctIdx}"]`);
+      if(cb) cb.classList.add('correct');
+      fb.className='feedback-banner show bad'; fb.innerText=question.explain;
+      speak(question.explain);
+      setTimeout(()=>practiceMathRound(domain, idx, stage, round+1, correctCount), 2600);
+    }else{
+      fb.className='feedback-banner show bad'; fb.innerText=wrongPhrase()+` (נשארו ${3-question.attempts} ניסיונות)`;
+      speak(wrongPhrase());
+      setTimeout(()=>practiceMathRound(domain, idx, stage, round, correctCount, question), 1300);
+    }
+  }
+}
+function uniqueNums(correct, min, max, count){
+  const set = new Set([correct]);
+  let guard=0;
+  while(set.size<count && guard<300){
+    const n = Math.floor(Math.random()*(max-min+1))+min;
+    set.add(n);
+    guard++;
+  }
+  return Array.from(set);
+}
+
+/* ---------- SHARED ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+async function finishStagePractice(domain, idx){
+  removeHint();
+  await markStageComplete(domain, idx);
+  const total = DOMAINS[domain].stages.length;
+  const isLast = idx>=total-1;
+  app.innerHTML = `<div class="celebrate">
+    <div class="emoji">🎉</div>
+    <h2>סיימת את השלב!</h2>
+    <p>${isLast?g('וואו! סיימת את כל התחום, את אלופה!','וואו! סיימת את כל התחום, אתה אלוף!'):g('בואי נמשיך לשלב הבא','בוא נמשיך לשלב הבא')}</p>
+    <button class="btn primary" onclick="${isLast?`goHome()`:`startStage('${domain}',${idx+1})`}" style="max-width:280px">${isLast?'לחזרה הביתה 🏠':'לשלב הבא ➡️'}</button>
+    <button class="btn ghost" style="max-width:280px;margin-top:10px" onclick="openDomain('${domain}')">רשימת השלבים 📋</button>
+  </div>`;
+  speak(isLast? g('וואו! סיימת את כל התחום. את אלופה גדולה!','וואו! סיימת את כל התחום. אתה אלוף גדול!') : g('כל הכבוד! סיימת את השלב. בואי נמשיך לשלב הבא','כל הכבוד! סיימת את השלב. בוא נמשיך לשלב הבא'));
+}
+
+/* ============ INIT ============ */
+let audioUnlocked = false;
+function renderGenderScreen(){
+  app.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:78vh;text-align:center;gap:14px;padding-top:16px;">
+      <div class="mascot" style="font-size:70px;">🦉</div>
+      <div class="home-title" style="font-size:24px;">לומדים עם חוכמה</div>
+      <div class="home-sub" style="margin-bottom:4px;">מי לומד/ת היום?</div>
+      <div style="display:flex;gap:16px;width:100%;max-width:340px;">
+        <button class="option-btn" style="flex:1;padding:22px 8px;border-color:var(--blue)" onclick="chooseGender('m')">
+          <span style="font-size:60px;">👦</span>
+          <span class="lbl" style="font-size:18px;">אני ילד</span>
+        </button>
+        <button class="option-btn" style="flex:1;padding:22px 8px;border-color:var(--purple)" onclick="chooseGender('f')">
+          <span style="font-size:60px;">👧</span>
+          <span class="lbl" style="font-size:18px;">אני ילדה</span>
+        </button>
+      </div>
+      <button class="btn ghost small" style="margin-top:14px" onclick="testVoice()">🔈 בדיקת קול</button>
+      <div id="voiceDiag" style="color:#8A83A0;font-size:13px;max-width:300px;min-height:18px"></div>
+    </div>`;
+}
+function chooseGender(val){
+  GENDER = val;
+  saveGender(val);
+  audioUnlocked = true;
+  /* This call happens directly inside a real tap, which is what mobile
+     browsers require in order to allow the app to use voice at all
+     afterward - including narration triggered later without a fresh tap. */
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance('שלום! אני חוכמה הינשופה');
+    u.lang = heVoice ? heVoice.lang : 'he-IL';
+    if(heVoice) u.voice = heVoice;
+    u.rate = 0.92; u.pitch = 1.2;
+    speechSynthesis.speak(u);
+  }catch(e){}
+  goHome();
+}
+function renderStart(){
+  app.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:78vh;text-align:center;gap:16px;padding-top:20px;">
+      <div class="mascot" style="font-size:80px;">🦉</div>
+      <div class="home-title">לומדים עם חוכמה</div>
+      <div class="home-sub">קריאה • כתיבה • חשבון</div>
+      <button class="btn blue" style="max-width:280px;font-size:17px;padding:14px 18px" onclick="testVoice()">🔈 בדיקת קול</button>
+      <div id="voiceDiag" style="color:#8A83A0;font-size:13px;max-width:300px;min-height:18px"></div>
+      <button class="btn primary" style="max-width:280px;font-size:20px;padding:20px 24px;margin-top:6px" onclick="unlockAndStart()">${g('🔊 לחצי כדי להתחיל','🔊 לחץ כדי להתחיל')}</button>
+      <div style="color:#8A83A0;font-size:14px;max-width:280px">הלחיצה מפעילה גם את הקול המנחה של האפליקציה בטלפון</div>
+    </div>`;
+}
+function testVoice(){
+  const diag = document.getElementById('voiceDiag');
+  if(!('speechSynthesis' in window)){
+    diag.innerText = 'הדפדפן הזה לא תומך בקול בכלל';
+    return;
+  }
+  pickVoice();
+  const voices = speechSynthesis.getVoices();
+  const heVoices = voices.filter(v=>/he|iw/i.test(v.lang));
+  if(voices.length===0){
+    diag.innerText = 'לא נמצא אף קול במכשיר. צריך להתקין מנוע הקראה (Google Text-to-Speech) בהגדרות הטלפון';
+  } else if(heVoices.length===0){
+    diag.innerText = `נמצאו ${voices.length} קולות אך אף אחד בעברית. צריך להוריד חבילת שפה עברית להגדרות ההקראה בטלפון`;
+  } else {
+    diag.innerText = `נמצא קול עברי: ${heVoices[0].name} (${heVoices[0].lang}). מנגנת עכשיו...`;
+  }
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance('אחת שתיים שלוש, זו בדיקת קול');
+    u.lang = heVoice ? heVoice.lang : 'he-IL';
+    if(heVoice) u.voice = heVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function unlockAndStart(){
+  audioUnlocked = true;
+  /* This call happens directly inside a real tap, which is what mobile
+     browsers require in order to allow the app to use voice at all
+     afterward - including narration triggered later without a fresh tap. */
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance('שלום! אני חוכמה הינשופה');
+    u.lang = heVoice ? heVoice.lang : 'he-IL';
+    if(heVoice) u.voice = heVoice;
+    u.rate = 0.92; u.pitch = 1.2;
+    speechSynthesis.speak(u);
+  }catch(e){}
+  goHome();
+}
+async function initApp(){
+  const saved = await loadGender();
+  if(saved==='m' || saved==='f'){ GENDER = saved; renderStart(); }
+  else { GENDER = 'f'; renderGenderScreen(); }
+}
+initApp();
+</script>
+</body>
+</html>
